@@ -26,7 +26,7 @@ async def get_variants(dialog_manager: DialogManager,
         data['func_result'] = func()
         dialog_manager.dialog_data.update(data)
 
-    return {'patient_parameters': func.variants.vars_with_id}
+    return {'patient_parameters': func.variants.vars_with_id, 'topic': func.topic}
 
 
 async def get_topics_for_input(dialog_manager: DialogManager,

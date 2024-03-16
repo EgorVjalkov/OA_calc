@@ -4,7 +4,7 @@ from aiogram_dialog.widgets.kbd import Select, Cancel, Button
 from aiogram_dialog.widgets.input.text import TextInput
 
 from oac.dialog.states import PatientDataInput
-from oac.program_logic.Patient import Patient
+from oac.program_logic.Patient2 import Patient
 from oac.dialog.getters import get_report
 
 
@@ -34,13 +34,11 @@ async def back_to_input_menu(c: CallbackQuery,
     await dm.switch_to(state=PatientDataInput.input_patient_data_menu)
 
 
-async def bye_and_get_result(c: CallbackQuery,
-                             w: Cancel,
-                             dm: DialogManager,
-                             ** kwargs):
-    report_data = await get_report(dm)
-    await c.message.answer(report_data['func_result'])
-    await dm.close_manager()
+async def on_mega_report(c: CallbackQuery,
+                         w: Button,
+                         dm: DialogManager,
+                         ** kwargs):
+    await dm.switch_to(state=PatientDataInput.finish_session_report)
 
 
 async def on_chosen_patient_data(c: CallbackQuery,

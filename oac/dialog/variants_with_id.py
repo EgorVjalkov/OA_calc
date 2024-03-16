@@ -1,5 +1,5 @@
 funcs = [
-    ('спинальная анестезия', 'sma_count'),
+    ('расчет доз медикаментов', 'drug_count'),
     ('острая кровопотеря', 'blood_vol_count')
 ]
 
@@ -26,8 +26,13 @@ sma_vars.extend(accessory_patient_data_for_sma)
 variants = {
     'funcs': funcs,
     'blood_vol_count': bleed_vars,
-    'sma_count': sma_vars,
+    'drag_count': ['weight'],
 }
+
+topics = {'blood_vol_count':
+              'Бот может посчитать предполагаемый ОЦК пациентки. Введите показатели.',
+          'drag_count':
+              'Бот может рассчитать дозы медикаментов по весу пациентки.'}
 
 answers = {
     'height': 'роста в см',

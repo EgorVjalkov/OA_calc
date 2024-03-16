@@ -1,5 +1,6 @@
 from oac.dialog.variants_with_id import variants, answers
-from oac.program_logic.Patient import Patient
+from oac.program_logic.Patient2 import Patient
+from oac.dialog.variants_with_id import topics
 
 
 class NecessaryArgs:
@@ -32,6 +33,7 @@ class Function:
         self.function_key = ctx_data.get('func_id')
         self.args = NecessaryArgs(self.function_key, ctx_data)
         self.variants = DynamicVars(self.function_key)
+        self.topic = topics[self.function_key]
 
     def __repr__(self):
         return f'{Function}({self.function_key})'

@@ -14,18 +14,28 @@ def greet_window() -> Window:
         Const('Привет, это бот для расчетов в акушерской анестезиологии, '
               'Задайте клиническую задачу.'),
         kbs.group_kb(selected.on_choosen_func, 'g_func', 's_funcs', 'funcs'),
-        Cancel(Const('никаких задач'),
-               on_click=selected.bye_and_get_result),
+        Button(Const('никаких задач'),
+               id='b_mega_report',
+               on_click=selected.on_mega_report),
         state=PatientDataInput.func_menu,
         getter=getters.get_funcs,
     )
 
 
+def finish_window():
+    return Window(
+        Format("{mega_report}"),
+        Cancel(Const('до встречи')),
+        state=PatientDataInput.finish_session_report,
+        getter=getters.finish_report
+        )
+
+
 def input_patient_data_window() -> Window:
     return Window(
-        Const('Бот может посчитать предполагаемый ОЦК пациентки. Введите показатели.'),
+        Format('{topic}'),
         kbs.group_kb(selected.on_chosen_patient_data,
-                     'g_bleed', 's_bleed', 'patient_parameters'),
+                     'g_pat_param', 'g_pat_patam', 'patient_parameters'),
         Back(Const('<< назад')),
         state=PatientDataInput.input_patient_data_menu,
         getter=getters.get_variants,
