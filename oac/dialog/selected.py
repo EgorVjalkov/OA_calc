@@ -4,7 +4,7 @@ from aiogram_dialog.widgets.kbd import Select, Cancel, Button
 from aiogram_dialog.widgets.input.text import TextInput
 
 from oac.dialog.states import PatientDataInput
-from oac.program_logic.Patient2 import Patient
+from oac.program_logic.spinal_dosage import Patient
 from oac.dialog.getters import get_report
 
 

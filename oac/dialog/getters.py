@@ -2,9 +2,9 @@ from aiogram_dialog import DialogManager
 from typing import Optional
 
 from oac.dialog.states import PatientDataInput
-from oac.dialog.function import PatientParameter, Function
+from oac.program_logic.function import PatientParameter, Function
 from oac.dialog.variants_with_id import get_dict_with_variants
-from oac.dialog.drag import get_drag_list_answer
+from oac.program_logic.drag import get_drag_list_answer
 
 
 async def get_funcs(dialog_manager: DialogManager,

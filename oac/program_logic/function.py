@@ -1,5 +1,5 @@
 from oac.dialog.variants_with_id import variants, answers
-from oac.program_logic.Patient2 import Patient
+from oac.program_logic.spinal_dosage import Patient
 from oac.dialog.variants_with_id import topics
 
 

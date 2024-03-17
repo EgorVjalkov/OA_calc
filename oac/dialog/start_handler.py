@@ -1,13 +1,10 @@
-from aiogram import F, Router
+from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command
 
 from aiogram_dialog import StartMode, DialogManager
-from aiogram_dialog.widgets.text import Format
 
 from oac.dialog.states import PatientDataInput
-from oac.dialog.drag import get_drag_list_answer
-
 
 router = Router()
 
