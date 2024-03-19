@@ -29,9 +29,9 @@ class DynamicVars:
 
 
 class Function:
-    def __init__(self, ctx_data: dict):
-        self.function_key = ctx_data.get('func_id')
-        self.args = NecessaryArgs(self.function_key, ctx_data)
+    def __init__(self, func_id, params: dict):
+        self.function_key = func_id
+        self.args = NecessaryArgs(self.function_key, params)
         self.variants = DynamicVars(self.function_key)
         self.topic = topics[self.function_key]
 
