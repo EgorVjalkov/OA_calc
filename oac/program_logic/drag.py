@@ -1,20 +1,19 @@
 from typing import Optional
 import pandas as pd
+from dataclasses import dataclass
 
 
+@dataclass
 class Drag:
-    def __init__(self,
-                 drag: str,
-                 dose_per_kg: str,
-                 unit: str,
-                 flask_dose: str,
-                 flask_unit: str):
-        self.drag = drag
-        self.dose_per_kg = float(dose_per_kg)
-        self.unit = unit
-        self.flask_dose = float(flask_dose)
-        self.flask_unit = flask_unit
+    drag: str
+    dose_per_kg: str
+    unit: str
+    flask_dose: str
+    flask_unit: str
 
+    def __post_init__(self):
+        self.dose_per_kg: float = float(self.dose_per_kg)
+        self.flask_dose: float = float(self.flask_dose)
         self.patient_dose: Optional[float] = None
 
     def __repr__(self):
@@ -43,25 +42,26 @@ class Drag:
         return answer
 
 
-def get_drag_list_answer(path: str, weight: int) -> str:
-    drag_frame = pd.read_excel(path, dtype=str)
+@dataclass
+class DragCounter:
+    weight: int
 
-    drag_list = [Drag(*drag_frame.loc[i]).count(weight)
-                 for i in drag_frame.index]
-    answer_list = [' | '.join([f'вес: {weight}', 'расчет', 'доза', 'ед'])]
-    for d in drag_list:
-        d = ' | '.join(d)
-        answer_list.append(d)
+    def __call__(self, *args, **kwargs) -> list:
+        path = 'drag_dosage.xlsx'
+        #path = 'program_logic/drag_dosage.xlsx'
+        drag_frame = pd.read_excel(path, dtype=str)
 
-    answer = '\n'.join(answer_list)
-
-    #drag_frame = pd.concat(drag_list, axis=1).T
-    #drag_frame = drag_frame.set_index(drag_frame.columns[0])
-
-    return answer
+        drag_list = [Drag(*drag_frame.loc[i]).count(self.weight)
+                     for i in drag_frame.index]
+        print(drag_list)
+        answer_list = [' | '.join([f'вес: {self.weight}', 'расчет', 'доза', 'ед'])]
+        for d in drag_list:
+            d = ' | '.join(d)
+            answer_list.append(d)
+        return answer_list
 
 
 if __name__ == '__main__':
-    path = 'drag_dosage.xlsx'
-    frame = get_drag_list_answer(path, 85)
-    print(frame)
+    dd = DragCounter(89)
+    rep = dd()
+    print('\n'.join(rep))
