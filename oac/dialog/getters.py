@@ -1,10 +1,11 @@
 from aiogram_dialog import DialogManager
 from typing import Optional
 
+
 from oac.dialog.states import PatientDataInput
 from oac.program_logic.function import PatientParameter, Function
+from oac.program_logic.patient import Patient
 from oac.dialog.variants_with_id import get_dict_with_variants
-from oac.program_logic.drag import get_drag_list_answer
 
 
 async def get_funcs(dialog_manager: DialogManager,
@@ -15,18 +16,9 @@ async def get_funcs(dialog_manager: DialogManager,
 async def get_variants(dialog_manager: DialogManager,
                        **middleware_date) -> dict:
     ctx = dialog_manager.current_context()
-    data = ctx.dialog_data
-
-    func = Function(data)
-    if 'patient_data' in data:
-        func.set_btn_text()
-
-    if func.is_args_ready:
-        func.variants.append_count_var()
-        data['func_result'] = func()
-        dialog_manager.dialog_data.update(data)
-
-    return {'patient_parameters': func.variants.vars_with_id, 'topic': func.topic}
+    patient = ctx.start_data['patient']
+    patient.match_ctx_data(ctx.dialog_data)
+    return {'patient_parameters': patient.variants_for_tg, 'topic': patient.topic}
 
 
 async def get_topics_for_input(dialog_manager: DialogManager,
@@ -43,19 +35,22 @@ async def get_topics_for_input(dialog_manager: DialogManager,
         return data
 
 
-async def get_drag_report(dialog_manager: DialogManager,
-                          **middleware_date) -> dict:
-    ctx = dialog_manager.current_context()
-    weight = ctx.dialog_data['weight']
-    drag_frame = get_drag_list_answer('dialog/drag_dosage.xlsx', weight)
-    return {'drag_report': drag_frame}
-
-
 async def get_report(dialog_manager: DialogManager,
                      **middleware_date) -> dict:
     ctx = dialog_manager.current_context()
-    if 'func_result' not in ctx.dialog_data:
-        return {'func_result': 'Принял, до встречи'}
+    patient: Patient = ctx.start_data['patient']
 
-    func_result = ctx.dialog_data['func_result']
-    return {'func_result': func_result}
+    match patient:
+        case Patient(func_is_ready=False, results={}:
+            return {'result': result}
+
+        case [Patient(func_is_ready=True), _]:
+            func_result = patient.func()
+            result_data = {'result': '\n'.join(func_result)}
+            ctx.dialog_data.update(result_data)
+            return result_data
+
+        case[Patient(func_is_ready=False), d] if 'func_result' not in d:
+            return {'result': 'Никаких задач, так никаних задач...'}
+
+    return {'result': 'не сработало'}

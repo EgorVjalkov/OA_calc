@@ -7,9 +7,3 @@ class PatientDataInput(StatesGroup):
     input_parameter = State()
     report = State()
     finish_session_report = State()
-
-    input_name = State()
-    input_height = State()
-    input_weight = State()
-
-    input_puncture_position = State()

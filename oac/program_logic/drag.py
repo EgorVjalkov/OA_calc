@@ -47,8 +47,8 @@ class DragCounter:
     weight: int
 
     def __call__(self, *args, **kwargs) -> list:
-        path = 'drag_dosage.xlsx'
-        #path = 'program_logic/drag_dosage.xlsx'
+        # path = 'drag_dosage.xlsx'
+        path = 'program_logic/drag_dosage.xlsx'
         drag_frame = pd.read_excel(path, dtype=str)
 
         drag_list = [Drag(*drag_frame.loc[i]).count(self.weight)

@@ -1,6 +1,6 @@
 from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.text import Const, Format
-from aiogram_dialog.widgets.kbd import Button, Start, Cancel, Back
+from aiogram_dialog.widgets.kbd import Button, Start, Cancel, Back, SwitchTo
 from aiogram_dialog.widgets.input.text import TextInput
 
 from oac.dialog.states import PatientDataInput
@@ -14,9 +14,9 @@ def greet_window() -> Window:
         Const('Привет, это бот для расчетов в акушерской анестезиологии, '
               'Задайте клиническую задачу.'),
         kbs.group_kb(selected.on_choosen_func, 'g_func', 's_funcs', 'funcs'),
-        Button(Const('никаких задач'),
-               id='b_mega_report',
-               on_click=selected.on_mega_report),
+        SwitchTo(Const('никаких задач'),
+                 id='sw_finish',
+                 state=PatientDataInput.finish_session_report),
         state=PatientDataInput.func_menu,
         getter=getters.get_funcs,
     )
@@ -24,10 +24,10 @@ def greet_window() -> Window:
 
 def finish_window():
     return Window(
-        Format("{mega_report}"),
+        Format("Ваши результаты:\n{result}"),
         Cancel(Const('до встречи')),
         state=PatientDataInput.finish_session_report,
-        getter=getters.finish_report
+        getter=getters.get_report,
         )
 
 
@@ -53,9 +53,9 @@ def input_window() -> Window:
     )
 
 
-def report_window(report_format, getter) -> Window:
+def report_window() -> Window:
     return Window(
-        Format(report_format),
+        Format('{result}'),
         Button(Const('<< изменить параметры'),
                id='b_to_input_menu',
                on_click=selected.back_to_input_menu),
@@ -64,12 +64,12 @@ def report_window(report_format, getter) -> Window:
                on_click=selected.back_to_main_menu),
         Cancel(Const('задача решена!')),
         state=PatientDataInput.report,
-        getter=getter)
+        getter=getters.get_report)
 
 
 dialog = Dialog(greet_window(),
                 input_patient_data_window(),
                 input_window(),
-                report_window("{func_result}", getters.get_report),
-                #report_window("{drag_report}", getters.get_drag_report)
+                report_window(),
+                finish_window(),
                 )

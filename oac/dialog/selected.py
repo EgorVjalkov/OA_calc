@@ -34,11 +34,14 @@ async def back_to_input_menu(c: CallbackQuery,
     await dm.switch_to(state=PatientDataInput.input_patient_data_menu)
 
 
-async def on_mega_report(c: CallbackQuery,
-                         w: Button,
-                         dm: DialogManager,
-                         ** kwargs):
-    await dm.switch_to(state=PatientDataInput.finish_session_report)
+async def on_finish_report(c: CallbackQuery,
+                  w: Button,
+                  dm: DialogManager,
+                  ** kwargs):
+    ctx = dm.current_context()
+    print(ctx.dialog_data)
+    await dm.done(result={'result': ctx.dialog_data['func_result']})
+    #await dm.switch_to(state=PatientDataInput.finish_session_report)
 
 
 async def on_chosen_patient_data(c: CallbackQuery,

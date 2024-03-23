@@ -5,6 +5,7 @@ from aiogram.filters import Command
 from aiogram_dialog import StartMode, DialogManager
 
 from oac.dialog.states import PatientDataInput
+from oac.program_logic.patient import Patient
 
 router = Router()
 
@@ -15,4 +16,5 @@ async def start_dialog(message: Message,
     # rep = get_drag_list_answer('dialog/drag_dosage.xlsx', 86)
     # await message.answer(rep)
     await dialog_manager.start(PatientDataInput.func_menu,
+                               data={'patient': Patient()},
                                mode=StartMode.RESET_STACK)

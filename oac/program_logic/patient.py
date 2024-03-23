@@ -1,30 +1,24 @@
 import pandas as pd
-from typing import Optional, Any
+from typing import Optional, Any, Union
 from collections import defaultdict
 
-from oac.program_logic.function import Function
-from oac.dialog.variants_with_id import variants
+from oac.dialog.variants_with_id import variants, topics
 from oac.program_logic.blood_counter import BloodVolCounter, BleedCounter
 from oac.program_logic.drag import DragCounter
 
 
-class UserList(list):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def overwrite(self, item):
-        if item in self:
-            index = self.index(item)
-            del self[index]
-        self.append(item)
-
-
 class Patient:
     def __init__(self):
-        self.session_data = defaultdict(dict)
+        self.results = defaultdict(dict)
         self.current_function_id: Optional[str] = None
-        self._func: Any = None
-        self._vars: Optional[list] = None
+        self.func: Optional[BloodVolCounter, DragCounter] = None
+        self.variants_for_tg: Optional[list] = None
+
+    def __repr__(self):
+        if self.func_id:
+            return f'Patient({self.func_id})'
+        else:
+            return f'Patient(new)'
 
     @property
     def func_id(self) -> str:
@@ -35,19 +29,12 @@ class Patient:
         self.current_function_id = func_id
 
     @property
-    def parameters(self) -> dict:
-        return self.session_data.get('parameters')
+    def topic(self):
+        return topics[self.func_id]
 
     @property
-    def variants_for_tg(self) -> list:
-        return self._vars
-
-    @variants_for_tg.setter
-    def variants_for_tg(self, new_vars):
-        self._vars = new_vars
-
     def func_is_ready(self):
-        return self._func is not None
+        return self.func is not None
 
     def get_variants(self, ctx_data) -> list: # посмотри где добавить рассчетку
         variants_for_tg = variants[self.func_id].copy()
@@ -58,62 +45,76 @@ class Patient:
                     value = ctx_data[btn_id]
                     variants_for_tg[ind] = (f'{btn_text}: {value}', btn_id)
 
-        self.variants_for_tg = variants_for_tg
-        return self.variants_for_tg
+        if self.func_is_ready:
+            variants_for_tg.append(('рассчитать', 'count'))
+
+        return variants_for_tg
 
     def match_ctx_data(self, data: dict) -> object:
-        match self.func_id, data:
-            case [None, {'func_id': func_id}]: # <- соответствует выбору функции
-                self.func_id = func_id
-                self.variants_for_tg = self.get_variants(data)
-                return self
+        self.func_id = data['func_id']
 
+        match self.func_id, data:
             case ['blood_vol_count',
                   {'height': h, 'weight': w, 'weight_before': b}]:
-                self._func = BloodVolCounter(h, w, b)
+                self.func = BloodVolCounter(h, w, b)
 
             case ['drag_count',
                   {'weight': weight}]:
-                self._func = DragCounter(weight)
+                self.func = DragCounter(weight)
 
-            case [func_id, ctx_data] if func_id:  # <- соответтствует заполнению даты
-                self.variants_for_tg = self.get_variants(ctx_data)
-                return self
-
-    def get_finish_vars(self) -> list:
-        menu_list = self.variants_for_tg
-        menu_list.append(('рассчитать', 'count'))
-        self.variants_for_tg = menu_list
-        return self.variants_for_tg
-
-    def update_data(self, key: str, item: dict):
-        self.session_data[key].update(item)
+        self.variants_for_tg = self.get_variants(data)
         return self
+
+    @property
+    def last_result(self) -> dict:
+        return list(self.results.values())[-1]
+
+    def get_result(self):
+        result = self.func()
+        self.results[self.func_id].update({
+            'parameters': self.func.__dict__,
+            'result': result})
+        self.func = None
+        return result
+
+    def extract_parameters(self, cls: object) -> dict:
+        params = cls.__dict__
+        variants_dict = dict(variants[self.func_id])
+        translated_params = {}
+
+        for i in params:
+            translated_params[]
+
+
+
+
+def func_test(patient: Patient, ctx_data: dict):
+    patient.match_ctx_data(ctx_data)
+    print(f'id - {ctx_data["func_id"]}')
+    print(f'vars - {patient.variants_for_tg}')
+    print(f'func - {patient.func}')
 
 
 if __name__ == '__main__':
 
-    patient = Patient()
-
+    pat = Patient()
     ctx = {'func_id': 'blood_vol_count'}
 
-    patient.match_ctx_data(ctx)
-    print(patient.func_id)
-    print(patient.variants_for_tg)
-    print(patient._func)
+    pat.match_ctx_data(ctx)
+    func_test(pat, ctx)
 
     ctx |= {'height': 170, 'weight': 70}
 
-    patient.match_ctx_data(ctx)
-    print(patient.func_id)
-    print(patient.variants_for_tg)
-    print(patient._func)
+    pat.match_ctx_data(ctx)
+    func_test(pat, ctx)
 
-    ctx |= {'weight_before': 63, 'func_id': 'drag_count'}
-    # замуть со сменой функции. на доработку!!!
+    #ctx |= {'weight_before': 63, 'func_id': 'drag_count'}
+    ctx |= {'weight_before': 63}
 
-    patient.match_ctx_data(ctx)
-    print(patient.func_id)
-    print(patient.variants_for_tg)
-    print(patient._func)
+    pat.match_ctx_data(ctx)
+    print(pat.func_id)
+    func_test(pat, ctx)
+    res = pat.get_result()
+    print(res, pat.last_result)
+
 
