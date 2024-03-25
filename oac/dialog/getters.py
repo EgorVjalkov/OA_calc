@@ -1,6 +1,7 @@
-from aiogram_dialog import DialogManager
 from typing import Optional
 
+from aiogram_dialog import DialogManager
+from aiogram.fsm.state import State
 
 from oac.dialog.states import PatientDataInput
 from oac.program_logic.function import PatientParameter, Function
@@ -40,17 +41,17 @@ async def get_report(dialog_manager: DialogManager,
     ctx = dialog_manager.current_context()
     patient: Patient = ctx.start_data['patient']
 
-    match patient:
-        case Patient(func_is_ready=False, results={}:
-            return {'result': result}
+    match ctx.state, patient:
+        case [State(state=PatientDataInput.report), _]:
+            patient.get_result()
+            return {'result': patient.get_reports(last=True)}
 
-        case [Patient(func_is_ready=True), _]:
-            func_result = patient.func()
-            result_data = {'result': '\n'.join(func_result)}
-            ctx.dialog_data.update(result_data)
-            return result_data
-
-        case[Patient(func_is_ready=False), d] if 'func_result' not in d:
+        case [State(state=PatientDataInput.finish_session_report),
+              Patient(is_results_empty=True)]:
             return {'result': 'Никаких задач, так никаних задач...'}
+
+        case [State(state=PatientDataInput.finish_session_report),
+              Patient(is_results_empty=False)]:
+            return {'result': patient.get_reports()}
 
     return {'result': 'не сработало'}

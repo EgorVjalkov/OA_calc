@@ -11,8 +11,8 @@ from oac.dialog import getters
 
 def greet_window() -> Window:
     return Window(
-        Const('Привет, это бот для расчетов в акушерской анестезиологии, '
-              'Задайте клиническую задачу.'),
+        Const('Привет, это бот для расчетов в акушерской анестезиологии. '
+              'Что считаем?'),
         kbs.group_kb(selected.on_choosen_func, 'g_func', 's_funcs', 'funcs'),
         SwitchTo(Const('никаких задач'),
                  id='sw_finish',
@@ -24,8 +24,9 @@ def greet_window() -> Window:
 
 def finish_window():
     return Window(
-        Format("Ваши результаты:\n{result}"),
-        Cancel(Const('до встречи')),
+        Format("{result}"),
+        Cancel(Const('до встречи!'),
+               on_click=selected.bye),
         state=PatientDataInput.finish_session_report,
         getter=getters.get_report,
         )
@@ -56,13 +57,15 @@ def input_window() -> Window:
 def report_window() -> Window:
     return Window(
         Format('{result}'),
-        Button(Const('<< изменить параметры'),
-               id='b_to_input_menu',
-               on_click=selected.back_to_input_menu),
-        Button(Const('<< назад в меню функций'),
-               id='b_to_main_menu',
-               on_click=selected.back_to_main_menu),
-        Cancel(Const('задача решена!')),
+        SwitchTo(Const('<< изменить параметры'),
+                 id='sw_to_input_menu',
+                 state=PatientDataInput.input_patient_data_menu),
+        SwitchTo(Const('<< назад в меню функций'),
+                 id='sw_to_func_menu',
+                 state=PatientDataInput.func_menu),
+        SwitchTo(Const('задача решена!'),
+                 id='sw_to_finish_report',
+                 state=PatientDataInput.finish_session_report),
         state=PatientDataInput.report,
         getter=getters.get_report)
 

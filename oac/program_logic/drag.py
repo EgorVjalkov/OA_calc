@@ -54,7 +54,7 @@ class DragCounter:
         drag_list = [Drag(*drag_frame.loc[i]).count(self.weight)
                      for i in drag_frame.index]
         print(drag_list)
-        answer_list = [' | '.join([f'вес: {self.weight}', 'расчет', 'доза', 'ед'])]
+        answer_list = [' | '.join([f'препарат', 'расчет', 'доза', 'ед'])]
         for d in drag_list:
             d = ' | '.join(d)
             answer_list.append(d)

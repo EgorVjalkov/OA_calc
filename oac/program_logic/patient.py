@@ -65,27 +65,48 @@ class Patient:
         self.variants_for_tg = self.get_variants(data)
         return self
 
-    @property
-    def last_result(self) -> dict:
-        return list(self.results.values())[-1]
-
-    def get_result(self):
+    def get_result(self) -> list:
         result = self.func()
+        params = self.extract_parameters()
         self.results[self.func_id].update({
-            'parameters': self.func.__dict__,
+            'parameters': params,
             'result': result})
         self.func = None
         return result
 
-    def extract_parameters(self, cls: object) -> dict:
-        params = cls.__dict__
+    def extract_parameters(self) -> dict:
+        params = self.func.__dict__
         variants_dict = dict(variants[self.func_id])
-        translated_params = {}
+        print(variants_dict)
+        translated_params = {i: params[variants_dict[i]]
+                             for i in variants_dict}
 
-        for i in params:
-            translated_params[]
+        # translated_params = [f"{i} - {translated_params[i]}" for i in translated_params]
+        return translated_params
 
+    def get_reports(self, last: bool = False) -> str:
+        answer = []
 
+        result_keys = list(self.results.keys())
+        if last:
+            result_keys = [result_keys[-1]]
+        else:
+            answer.append("Ваши результаты.")
+
+        for result in result_keys:
+            answer.append("Для пациента с параметрами:")
+            params = self.results[result]['parameters']
+            params = [f"{i} - {params[i]}" for i in params]
+            answer.extend(list(params))
+            answer.append('получены результаты:')
+            result = self.results[result]['result']
+            answer.extend(result)
+            answer.append('')
+        return '\n'.join(answer)
+
+    @property
+    def is_results_empty(self):
+        return len(self.results) == 0
 
 
 def func_test(patient: Patient, ctx_data: dict):
@@ -108,13 +129,17 @@ if __name__ == '__main__':
     pat.match_ctx_data(ctx)
     func_test(pat, ctx)
 
-    #ctx |= {'weight_before': 63, 'func_id': 'drag_count'}
     ctx |= {'weight_before': 63}
 
     pat.match_ctx_data(ctx)
-    print(pat.func_id)
     func_test(pat, ctx)
     res = pat.get_result()
-    print(res, pat.last_result)
+
+    ctx |= {'func_id': 'drag_count'}
+    pat.match_ctx_data(ctx)
+    func_test(pat, ctx)
+    res2 = pat.get_result()
+    print(pat.get_reports(last=True))
+    print(pat.get_reports())
 
 

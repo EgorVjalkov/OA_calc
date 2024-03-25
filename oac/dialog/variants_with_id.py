@@ -1,6 +1,6 @@
 funcs = [
-    ('острая кровопотеря', 'blood_vol_count'),
-    ('расчет доз медикаментов', 'drag_count'),
+    ('примерный ОЦК', 'blood_vol_count'),
+    ('дозировку медикаментов', 'drag_count'),
 ]
 
 general_patient_data = [
