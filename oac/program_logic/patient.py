@@ -100,7 +100,7 @@ class Patient:
             answer.extend(list(params))
             answer.append('получены результаты:')
             result = self.results[result]['result']
-            answer.extend(result)
+            answer.append(result)
             answer.append('')
         return '\n'.join(answer)
 

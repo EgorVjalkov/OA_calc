@@ -1,6 +1,9 @@
 from typing import Optional
 import pandas as pd
 from dataclasses import dataclass
+from prettytable import PrettyTable
+
+from oac.program_logic.my_table import get_my_table_string
 
 
 @dataclass
@@ -38,7 +41,7 @@ class Drag:
         dose_in_str = f'{self.prepare_dose(self.get_patient_dose(weight))}{self.unit}'
         flasks = f'{self.get_patient_dose_in_flasks()} {self.flask_unit}'
         answer = pd.Series({
-            f'вес: {weight} кг': self.drag, 'расчет': dose_per_kg, 'доза': dose_in_str, 'ед': flasks})
+            f'препарат': self.drag, 'расчет': dose_per_kg, 'доза': dose_in_str, 'ед': flasks})
         return answer
 
 
@@ -46,22 +49,22 @@ class Drag:
 class DragCounter:
     weight: int
 
-    def __call__(self, *args, **kwargs) -> list:
-        # path = 'drag_dosage.xlsx'
+    def __call__(self, *args, **kwargs) -> str:
+        path = 'drag_dosage.xlsx'
         path = 'program_logic/drag_dosage.xlsx'
         drag_frame = pd.read_excel(path, dtype=str)
 
         drag_list = [Drag(*drag_frame.loc[i]).count(self.weight)
                      for i in drag_frame.index]
-        print(drag_list)
-        answer_list = [' | '.join([f'препарат', 'расчет', 'доза', 'ед'])]
-        for d in drag_list:
-            d = ' | '.join(d)
-            answer_list.append(d)
-        return answer_list
+
+        my_table = get_my_table_string(
+            fields=['препарат', 'расчет', 'доза', 'ед'],
+            rows=drag_list,
+        )
+        return my_table
 
 
 if __name__ == '__main__':
     dd = DragCounter(89)
     rep = dd()
-    print('\n'.join(rep))
+    print(rep)

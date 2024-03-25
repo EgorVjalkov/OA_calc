@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-
+from oac.program_logic.my_table import get_my_table_string
 @dataclass
 class BloodVolCounter:
     height: int
@@ -29,11 +29,12 @@ class BloodVolCounter:
     def __call__(self, *args, **kwargs):
         clin_ = '-'.join(self.count_bleed_volume((10, 15)))
         crit_ = '-'.join(self.count_bleed_volume((25, 30)))
-        return [
-            f'Oбъем ОЦК ~ {self.blood_volume}мл',
-            f'шок I ~ {clin_}мл',
-            f'шок II-III ~ {crit_}мл',
+        rows = [
+            ['Oбъем ОЦК', f'~ {self.blood_volume}мл'],
+            ['шок I', f'~ {clin_}мл'],
+            ['шок II-III', f'~ {crit_}мл'],
         ]
+        return get_my_table_string(fields=[], rows=rows, header=False)
 
 
 class BleedCounter:
@@ -51,4 +52,5 @@ class BleedCounter:
 if __name__ == '__main__':
     data = {'weight': 56, 'height': 146, 'weight_before': 52}
     a = BloodVolCounter(**data)
-    print(a.bmi)
+    rep = a()
+    print(rep)
