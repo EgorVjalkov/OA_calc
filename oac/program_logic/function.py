@@ -68,7 +68,10 @@ class PatientParameter:
 
     @property
     def answer(self):
-        return f'Введите показатель {answers[self.name]}'
+        if self.name in answers:
+            return f'Введите показатель {answers[self.name]}'
+        else:
+            return f'Выберите из списка.'
 
 
 if __name__ == '__main__':

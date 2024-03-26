@@ -10,9 +10,9 @@ risk_factor_dict = {
 
     'fetus': {
         'risk_factor_dict': {
-            'b': {'inter': 'крупный (вес > 4кг)', 'count': 1},
-            'n': {'inter': 'normal (fetus weight > 2.5kg and < 4kg)', 'count': 0},
-            's': {'inter': 'small (fetus weight < 2.5kg)', 'count': -1}},
+            'b': {'inter': 'вес > 4кг', 'count': 1},
+            'n': {'inter': '2.5кг < вес < 4кг', 'count': 0},
+            's': {'inter': 'вес < 2.5кг', 'count': -1}},
         'description': 'fetus is'},
 
     'bladder': {

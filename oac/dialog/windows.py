@@ -1,3 +1,5 @@
+import operator
+
 from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.text import Const, Format
 from aiogram_dialog.widgets.kbd import Button, Start, Cancel, Back, SwitchTo
@@ -7,13 +9,14 @@ from oac.dialog.states import PatientDataInput
 from oac.dialog import kbs
 from oac.dialog import selected
 from oac.dialog import getters
+from oac.dialog.variants_with_id import sma_confirm_text
 
 
 def greet_window() -> Window:
     return Window(
         Const('Привет, это бот для расчетов в акушерской анестезиологии. '
               'Что считаем?'),
-        kbs.group_kb(selected.on_choosen_func, 'g_func', 's_funcs', 'funcs'),
+        kbs.group_kb(selected.on_choosen_func, 'func', 'funcs'),
         SwitchTo(Const('никаких задач'),
                  id='sw_finish',
                  state=PatientDataInput.finish_session_report),
@@ -32,11 +35,21 @@ def finish_window():
         )
 
 
+def sma_confirm_window():
+    return Window(
+        Const(sma_confirm_text),
+        SwitchTo(Const('Понимаю'),
+                 id='sw_to_input',
+                 state=PatientDataInput.input_patient_data_menu),
+        state=PatientDataInput.sma_confirm
+    )
+
+
 def input_patient_data_window() -> Window:
     return Window(
         Format('{topic}'),
         kbs.group_kb(selected.on_chosen_patient_data,
-                     'g_pat_param', 'g_pat_patam', 'patient_parameters'),
+                     'pat_param', 'patient_parameters'),
         Back(Const('<< назад')),
         state=PatientDataInput.input_patient_data_menu,
         getter=getters.get_variants,
@@ -48,9 +61,23 @@ def input_window() -> Window:
         Format('{category.answer}'),
         TextInput(id='enter_data',
                   on_success=selected.on_entered_data),
-        Back(Const('<< назад')),
+        SwitchTo(Const('<< назад'),
+                 id='sw_to_in_menu',
+                 state=PatientDataInput.input_patient_data_menu),
         state=PatientDataInput.input_parameter,
         getter=getters.get_topics_for_input,
+    )
+
+
+def select_window() -> Window:
+    return Window(
+        Format('{topic}'),
+        kbs.group_kb(selected.on_choosen_parameter, id_='ch_param', select_items='param_vars'),
+        SwitchTo(Const('<< назад'),
+                 id='sw_to_in_menu',
+                 state=PatientDataInput.input_patient_data_menu),
+        state=PatientDataInput.select_parameter,
+        getter=getters.get_kb_for_select_parameter,
     )
 
 
@@ -71,7 +98,9 @@ def report_window() -> Window:
 
 
 dialog = Dialog(greet_window(),
+                sma_confirm_window(),
                 input_patient_data_window(),
+                select_window(),
                 input_window(),
                 report_window(),
                 finish_window(),

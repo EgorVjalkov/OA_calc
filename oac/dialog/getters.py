@@ -6,7 +6,7 @@ from aiogram.fsm.state import State
 from oac.dialog.states import PatientDataInput
 from oac.program_logic.function import PatientParameter, Function
 from oac.program_logic.patient import Patient
-from oac.dialog.variants_with_id import get_dict_with_variants
+from oac.dialog.variants_with_id import get_dict_with_variants, variants
 
 
 async def get_funcs(dialog_manager: DialogManager,
@@ -36,6 +36,13 @@ async def get_topics_for_input(dialog_manager: DialogManager,
         return data
 
 
+async def get_kb_for_select_parameter(dialog_manager: DialogManager,
+                                      **middleware_data) -> dict:
+    ctx = dialog_manager.current_context()
+    patient_data = ctx.dialog_data.get('patient_data')
+    return {'param_vars': variants[patient_data], 'topic': 'Выберите вариант.'}
+
+
 async def get_report(dialog_manager: DialogManager,
                      **middleware_date) -> dict:
     ctx = dialog_manager.current_context()
@@ -48,7 +55,7 @@ async def get_report(dialog_manager: DialogManager,
 
         case [State(state=PatientDataInput.finish_session_report),
               Patient(is_results_empty=True)]:
-            return {'result': 'Никаких задач, так никаних задач...'}
+            return {'result': 'Никаких задач, так никаких задач...'}
 
         case [State(state=PatientDataInput.finish_session_report),
               Patient(is_results_empty=False)]:
