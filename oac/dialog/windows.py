@@ -1,5 +1,3 @@
-import operator
-
 from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.text import Const, Format
 from aiogram_dialog.widgets.kbd import Button, Start, Cancel, Back, SwitchTo
@@ -16,23 +14,14 @@ def greet_window() -> Window:
     return Window(
         Const('Привет, это бот для расчетов в акушерской анестезиологии. '
               'Что считаем?'),
-        kbs.group_kb(selected.on_choosen_func, 'func', 'funcs'),
+        kbs.group_kb_for_func_menu(selected.on_chosen_func,
+                             'func', 'funcs'),
         SwitchTo(Const('никаких задач'),
                  id='sw_finish',
-                 state=PatientDataInput.finish_session_report),
+                 state=PatientDataInput.print_finish_session_report),
         state=PatientDataInput.func_menu,
         getter=getters.get_funcs,
     )
-
-
-def finish_window():
-    return Window(
-        Format("{result}"),
-        Cancel(Const('до встречи!'),
-               on_click=selected.bye),
-        state=PatientDataInput.finish_session_report,
-        getter=getters.get_report,
-        )
 
 
 def sma_confirm_window():
@@ -40,7 +29,7 @@ def sma_confirm_window():
         Const(sma_confirm_text),
         SwitchTo(Const('Понимаю'),
                  id='sw_to_input',
-                 state=PatientDataInput.input_patient_data_menu),
+                 state=PatientDataInput.patient_parameters_menu),
         state=PatientDataInput.sma_confirm
     )
 
@@ -48,35 +37,37 @@ def sma_confirm_window():
 def input_patient_data_window() -> Window:
     return Window(
         Format('{topic}'),
-        kbs.group_kb(selected.on_chosen_patient_data,
-                     'pat_param', 'patient_parameters'),
-        Back(Const('<< назад')),
-        state=PatientDataInput.input_patient_data_menu,
-        getter=getters.get_variants,
+        kbs.group_kb_for_patient_params_menu(selected.on_chosen_patient_data,
+                                             'pat_param', 'patient_parameters'),
+        SwitchTo(Const('<< назад'),
+                 id='sw_func_menu',
+                 state=PatientDataInput.func_menu),
+        state=PatientDataInput.patient_parameters_menu,
+        getter=getters.get_data_for_pat_params_menu,
     )
 
 
 def input_window() -> Window:
     return Window(
-        Format('{category.answer}'),
+        Format('{topic}'),
         TextInput(id='enter_data',
-                  on_success=selected.on_entered_data),
+                  on_success=selected.on_entered_parameter_value),
         SwitchTo(Const('<< назад'),
                  id='sw_to_in_menu',
-                 state=PatientDataInput.input_patient_data_menu),
-        state=PatientDataInput.input_parameter,
-        getter=getters.get_topics_for_input,
+                 state=PatientDataInput.patient_parameters_menu),
+        state=PatientDataInput.parameter_value_input,
+        getter=getters.get_topic_for_input,
     )
 
 
 def select_window() -> Window:
     return Window(
         Format('{topic}'),
-        kbs.group_kb(selected.on_choosen_parameter, id_='ch_param', select_items='param_vars'),
+        kbs.group_kb_for_func_menu(selected.on_chosen_parameter_value, id_='ch_param', select_items='param_vars'),
         SwitchTo(Const('<< назад'),
                  id='sw_to_in_menu',
-                 state=PatientDataInput.input_patient_data_menu),
-        state=PatientDataInput.select_parameter,
+                 state=PatientDataInput.patient_parameters_menu),
+        state=PatientDataInput.parameter_value_menu,
         getter=getters.get_kb_for_select_parameter,
     )
 
@@ -86,15 +77,25 @@ def report_window() -> Window:
         Format('{result}'),
         SwitchTo(Const('<< изменить параметры'),
                  id='sw_to_input_menu',
-                 state=PatientDataInput.input_patient_data_menu),
+                 state=PatientDataInput.patient_parameters_menu),
         SwitchTo(Const('<< назад в меню функций'),
                  id='sw_to_func_menu',
                  state=PatientDataInput.func_menu),
         SwitchTo(Const('задача решена!'),
                  id='sw_to_finish_report',
-                 state=PatientDataInput.finish_session_report),
-        state=PatientDataInput.report,
+                 state=PatientDataInput.print_finish_session_report),
+        state=PatientDataInput.print_report,
         getter=getters.get_report)
+
+
+def finish_window():
+    return Window(
+        Format("{result}"),
+        Cancel(Const('до встречи!'),
+               on_click=selected.on_adieu),
+        state=PatientDataInput.print_finish_session_report,
+        getter=getters.get_report,
+    )
 
 
 dialog = Dialog(greet_window(),

@@ -1,17 +1,50 @@
-import pandas as pd
-from typing import Optional, Any, Union
+from typing import Optional, Dict, KeysView
 from collections import defaultdict
+from dataclasses import dataclass
 
 from oac.dialog.variants_with_id import variants, topics
-from oac.program_logic.blood_counter import BloodVolCounter, BleedCounter
+from oac.program_logic.blood_counter import BloodVolCounter
 from oac.program_logic.drag import DragCounter
+from oac.dialog.patientparameter import PatientParameter, load_parameters
+
+
+@dataclass
+class ParametersForCurrentFunc:
+    func_id: str
+    current_parameter_id: Optional[str] = None
+
+    def __post_init__(self):
+        self.data: Dict[str, PatientParameter] = load_parameters(self.func_id)
+
+    @property
+    def parameter_id(self):
+        return self.current_parameter_id
+
+    @parameter_id.setter
+    def parameter_id(self, param_id_from_tg):
+        self.current_parameter_id = param_id_from_tg
+
+    @property
+    def current(self) -> PatientParameter:
+        return self.data.get(self.current_parameter_id)
+
+    @property
+    def necessary_params(self) -> KeysView:
+        return self.data.keys()
+
+    @property
+    def all_params_filled(self) -> bool:
+        values = [i for i in self.data if not self.data[i].value]
+        return len(values) == 0
 
 
 class Patient:
     def __init__(self):
-        self.results = defaultdict(dict)
         self.current_function_id: Optional[str] = None
-        self.func: Optional[BloodVolCounter, DragCounter] = None
+        self.params: Optional[ParametersForCurrentFunc] = None
+        self.func: Optional[BloodVolCounter | DragCounter] = None
+        self.results = defaultdict(dict)
+
         self.variants_for_tg: Optional[list] = None
 
     def __repr__(self):
@@ -36,7 +69,24 @@ class Patient:
     def func_is_ready(self):
         return self.func is not None
 
-    def get_variants(self, ctx_data) -> list: # посмотри где добавить рассчетку
+    def load_parameters(self) -> ParametersForCurrentFunc:
+        self.params = ParametersForCurrentFunc(self.func_id)
+        return self.params
+
+    def match_ctx_data(self, data: dict) -> object:
+        match self.func_id, data:
+            case ['blood_vol_count',
+                  {'height': h, 'weight': w, 'weight_before': b}]:
+                self.func = BloodVolCounter(h, w, b)
+
+            case ['drag_count',
+                  {'weight': weight}]:
+                self.func = DragCounter(weight)
+
+        self.variants_for_tg = self.get_variants(data)
+        return self
+
+    def get_variants(self, ctx_data) -> list:
         variants_for_tg = variants[self.func_id].copy()
         for i in variants_for_tg:
             match i:
@@ -49,21 +99,6 @@ class Patient:
             variants_for_tg.append(('рассчитать', 'count'))
 
         return variants_for_tg
-
-    def match_ctx_data(self, data: dict) -> object:
-        self.func_id = data['func_id']
-
-        match self.func_id, data:
-            case ['blood_vol_count',
-                  {'height': h, 'weight': w, 'weight_before': b}]:
-                self.func = BloodVolCounter(h, w, b)
-
-            case ['drag_count',
-                  {'weight': weight}]:
-                self.func = DragCounter(weight)
-
-        self.variants_for_tg = self.get_variants(data)
-        return self
 
     def get_result(self) -> list:
         result = self.func()
