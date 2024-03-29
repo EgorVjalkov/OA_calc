@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from oac.dialog.variants_with_id import variants, topics
 from oac.program_logic.blood_counter import BloodVolCounter
 from oac.program_logic.drag import DragCounter
-from oac.dialog.patientparameter import PatientParameter, load_parameters
+from oac.dialog.patientparameter import PatientParameter, load_parameters, Btn
 
 
 @dataclass
@@ -21,7 +21,7 @@ class ParametersForCurrentFunc:
         return self.current_parameter_id
 
     @parameter_id.setter
-    def parameter_id(self, param_id_from_tg):
+    def parameter_id(self, param_id_from_tg: str) -> None:
         self.current_parameter_id = param_id_from_tg
 
     @property
@@ -36,6 +36,12 @@ class ParametersForCurrentFunc:
     def all_params_filled(self) -> bool:
         values = [i for i in self.data if not self.data[i].value]
         return len(values) == 0
+
+    def get_btns(self) -> list:
+        btns_list = [Btn(self.data[i].button_text, i) for i in self.data]
+        if self.all_params_filled:
+            btns_list.append(Btn('рассчитать', 'count'))
+        return btns_list
 
 
 class Patient:
@@ -154,27 +160,9 @@ def func_test(patient: Patient, ctx_data: dict):
 if __name__ == '__main__':
 
     pat = Patient()
-    ctx = {'func_id': 'blood_vol_count'}
-
-    pat.match_ctx_data(ctx)
-    func_test(pat, ctx)
-
-    ctx |= {'height': 170, 'weight': 70}
-
-    pat.match_ctx_data(ctx)
-    func_test(pat, ctx)
-
-    ctx |= {'weight_before': 63}
-
-    pat.match_ctx_data(ctx)
-    func_test(pat, ctx)
-    res = pat.get_result()
-
-    ctx |= {'func_id': 'drag_count'}
-    pat.match_ctx_data(ctx)
-    func_test(pat, ctx)
-    res2 = pat.get_result()
-    print(pat.get_reports(last=True))
-    print(pat.get_reports())
-
+    pat.func_id = 'blood_vol_count'
+    pat.load_parameters()
+    pat.params.parameter_id = 'weight'
+    pat.params.current.value = 100
+    print(pat.params.current)
 

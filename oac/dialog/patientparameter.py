@@ -5,6 +5,12 @@ import pandas as pd
 
 
 @dataclass
+class Btn:
+    text: str
+    id: str
+
+
+@dataclass
 class PatientParameter:
     id: str
     btn_text: str

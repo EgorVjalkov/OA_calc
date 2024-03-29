@@ -14,7 +14,7 @@ def group_kb_for_patient_params_menu(on_click, id_: str, select_items: str,):
     select_id = f's_{id_}'
     return Group(
         Select(
-            Format('{item.button_text}'), #
+            Format('{item.text}'), #
             id=select_id,
             item_id_getter=operator.attrgetter('id'),
             items=select_items,

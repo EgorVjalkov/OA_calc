@@ -5,7 +5,7 @@ from aiogram.fsm.state import State
 
 from oac.dialog.states import PatientDataInput
 from oac.program_logic.function import PatientParameter, Function
-from oac.program_logic.patient import Patient
+from oac.program_logic.patient import Patient, ParametersForCurrentFunc
 from oac.dialog.variants_with_id import get_dict_with_variants, variants
 from oac.dialog.patientparameter import PatientParameter
 from oac.dialog.selected import get_patient, set_patient
@@ -22,6 +22,7 @@ async def get_data_for_pat_params_menu(dialog_manager: DialogManager,
     match patient:
         case Patient(params=None):
             patient.load_parameters()
+            # здесь нужна перезагрузка вариантов ответа
     set_patient(dialog_manager, patient)
     print(patient.params.data)
     ### здесь или в пациенте нужно придумать способ добавления в варианты ответов.
@@ -29,7 +30,7 @@ async def get_data_for_pat_params_menu(dialog_manager: DialogManager,
     ### можно через параметры.гетттер_кортежей_кнопка_айди
     ### можно через пациента.гет_вариантс
 
-    return {'patient_parameters': patient.params.data.values(), 'topic': patient.topic}
+    return {'patient_parameters': patient.params.get_btns(), 'topic': patient.topic}
 
 
 async def get_topic_for_input(dialog_manager: DialogManager,
