@@ -13,6 +13,7 @@ class Btn:
 @dataclass
 class PatientParameter:
     id: str
+    func_ids: str
     btn_text: str
     btn_text_filled: str
     fill_by_text_input: bool
@@ -21,6 +22,9 @@ class PatientParameter:
 
     def __post_init__(self):
         self.fill_by_text_input = bool(self.fill_by_text_input)
+
+    def __repr__(self):
+        return f'PatientParameter({self.id}={self.default_value})'
 
     @property
     def value(self):
@@ -31,21 +35,21 @@ class PatientParameter:
         self.default_value = new_value
 
     @property
-    def button_text(self):
+    def button_text(self): # get????
         if self.value:
             return self.btn_text_filled.format(self.value)
         else:
             return self.btn_text
 
 
-def load_parameters(func_id) -> dict:
+def load_parameters() -> dict:
     params_dict = {}
     # path = 'parameters.xlsx'
     path = 'dialog/parameters.xlsx'
     param_df = pd.read_excel(path, sheet_name='parameters', dtype=object)
-    filtered = param_df.func_id.map(lambda i: func_id in i)
-    param_df = param_df[filtered == True]
-    del param_df['func_id']
+    # filtered = param_df.func_id.map(lambda i: func_id in i)
+    # param_df = param_df[filtered == True]
+    # del param_df['func_id']
 
     for param_row in param_df.index:
         row = param_df.loc[param_row]

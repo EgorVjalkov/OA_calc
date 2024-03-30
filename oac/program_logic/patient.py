@@ -1,6 +1,6 @@
 from typing import Optional, Dict, KeysView
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, InitVar
 
 from oac.dialog.variants_with_id import variants, topics
 from oac.program_logic.blood_counter import BloodVolCounter
@@ -10,11 +10,17 @@ from oac.dialog.patientparameter import PatientParameter, load_parameters, Btn
 
 @dataclass
 class ParametersForCurrentFunc:
-    func_id: str
+    current_func_id: Optional[str] = None
+    current_params: Optional[dict] = None
     current_parameter_id: Optional[str] = None
 
     def __post_init__(self):
-        self.data: Dict[str, PatientParameter] = load_parameters(self.func_id)
+        self.data: Dict[str, PatientParameter] = load_parameters()
+
+    def set_current_params(self, func_id):
+        self.current_params = {i: self.data[i] for i in self.data
+                               if func_id in self.data[i].func_ids}
+        return self.current_params
 
     @property
     def parameter_id(self):
@@ -28,17 +34,17 @@ class ParametersForCurrentFunc:
     def current(self) -> PatientParameter:
         return self.data.get(self.current_parameter_id)
 
-    @property
-    def necessary_params(self) -> KeysView:
-        return self.data.keys()
+    #@property
+    #def necessary_params(self) -> KeysView:
+    #    return self.data.keys()
 
     @property
     def all_params_filled(self) -> bool:
-        values = [i for i in self.data if not self.data[i].value]
+        values = [i for i in self.current_params if not self.current_params[i].value]
         return len(values) == 0
 
     def get_btns(self) -> list:
-        btns_list = [Btn(self.data[i].button_text, i) for i in self.data]
+        btns_list = [Btn(self.data[i].button_text, i) for i in self.current_params]
         if self.all_params_filled:
             btns_list.append(Btn('рассчитать', 'count'))
         return btns_list
@@ -47,7 +53,7 @@ class ParametersForCurrentFunc:
 class Patient:
     def __init__(self):
         self.current_function_id: Optional[str] = None
-        self.params: Optional[ParametersForCurrentFunc] = None
+        self.params = ParametersForCurrentFunc()
         self.func: Optional[BloodVolCounter | DragCounter] = None
         self.results = defaultdict(dict)
 
@@ -66,6 +72,9 @@ class Patient:
     @func_id.setter
     def func_id(self, func_id) -> None:
         self.current_function_id = func_id
+
+    def set_current_params(self):
+        return self.params.set_current_params(self.func_id)
 
     @property
     def topic(self):

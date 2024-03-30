@@ -19,17 +19,11 @@ async def get_funcs(dialog_manager: DialogManager,
 async def get_data_for_pat_params_menu(dialog_manager: DialogManager,
                                        **middleware_date) -> dict:
     patient = get_patient(dialog_manager)
-    match patient:
-        case Patient(params=None):
-            patient.load_parameters()
-            # здесь нужна перезагрузка вариантов ответа
-    set_patient(dialog_manager, patient)
+    print(patient.func_id)
+    patient.set_current_params()
     print(patient.params.data)
-    ### здесь или в пациенте нужно придумать способ добавления в варианты ответов.
-    ### мoжно через скрытую кнопку свитчто
-    ### можно через параметры.гетттер_кортежей_кнопка_айди
-    ### можно через пациента.гет_вариантс
-
+    print(patient.params.current_params)
+    #set_patient(dialog_manager, patient)
     return {'patient_parameters': patient.params.get_btns(), 'topic': patient.topic}
 
 
