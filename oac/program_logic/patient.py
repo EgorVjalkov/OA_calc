@@ -5,12 +5,12 @@ from dataclasses import dataclass, InitVar
 from oac.dialog.variants_with_id import variants, topics
 from oac.program_logic.blood_counter import BloodVolCounter
 from oac.program_logic.drag import DragCounter
-from oac.dialog.patientparameter import PatientParameter, load_parameters, Btn
+from oac.dialog.patientparameter import load_parameters, Btn, PatientParameter, ComplexParameter
 
 
 @dataclass
 class ParametersForCurrentFunc:
-    current_func_id: Optional[str] = None
+    #current_func_id: Optional[str] = None
     current_params: Optional[dict] = None
     current_parameter_id: Optional[str] = None
 
@@ -31,7 +31,7 @@ class ParametersForCurrentFunc:
         self.current_parameter_id = param_id_from_tg
 
     @property
-    def current(self) -> PatientParameter:
+    def current(self) -> PatientParameter | ComplexParameter:
         return self.data.get(self.current_parameter_id)
 
     #@property
