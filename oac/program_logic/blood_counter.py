@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
 from oac.program_logic.my_table import get_my_table_string
+
+
 @dataclass
 class BloodVolCounter:
     height: int

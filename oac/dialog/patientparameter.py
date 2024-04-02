@@ -31,14 +31,14 @@ class BaseParameter:
     btn_text_filled: str
     fill_by_text_input: bool
     topic: str
-    variants: Dict[str, CompParamMenuBtn] = None
     default_value: Optional[int | str] = None
+    variants: Optional[Dict[str, CompParamMenuBtn]] = None
 
     def __post_init__(self):
         self.fill_by_text_input = bool(self.fill_by_text_input)
 
-    #def __repr__(self):
-    #    return f'PatientParameter({self.id}={self.default_value})'
+    def __repr__(self):
+        return f'PatientParameter({self.id}={self.default_value})'
 
     @property
     def value(self):
@@ -60,14 +60,11 @@ class PatientParameter(BaseParameter):
 
 
 class ComplexParameter(BaseParameter):
-    #def __repr__(self):
-    #    return f'ComplexParameter({self.id}={self.default_value})'
-
-    def print_dict(self):
-        print(self.variants)
+    def __repr__(self):
+        return f'ComplexParameter({self.id}={self.default_value})'
 
     @property
-    def button_text(self): # get????
+    def button_text(self):
         if self.value:
             variant = self.variants[self.value]
             return self.btn_text_filled.format(variant.text_if_filled)
@@ -83,6 +80,7 @@ def load_parameters() -> dict:
     # path = 'parameters.xlsx'
     path = 'dialog/parameters.xlsx'
     param_df = pd.read_excel(path, sheet_name='parameters', dtype=object)
+    print(param_df)
     comp_param_btns_df = pd.read_excel(path, sheet_name='parameter_menu', dtype=object)
     # filtered = param_df.func_id.map(lambda i: func_id in i)
     # param_df = param_df[filtered == True]

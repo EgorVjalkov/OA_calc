@@ -31,11 +31,11 @@ async def on_chosen_func(c: CallbackQuery,
         await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
 
 
-async def on_chosen_patient_data(c: CallbackQuery,
-                                 w: Select,
-                                 dm: DialogManager,
-                                 item_id: str,
-                                 **kwargs) -> None:
+async def on_chosen_patient_parameter(c: CallbackQuery,
+                                      w: Select,
+                                      dm: DialogManager,
+                                      item_id: str,
+                                      **kwargs) -> None:
     if 'count' in item_id:
         await dm.switch_to(state=PatientDataInput.print_report)
 
@@ -73,9 +73,11 @@ async def on_chosen_parameter_value(m: CallbackQuery,
                                     dm: DialogManager,
                                     item_id: str,
                                     **kwargs):
-    ctx = dm.current_context()
-    patient_data = ctx.dialog_data.get('patient_data')
-    ctx.dialog_data.update({patient_data: item_id})
+    patient = get_patient(dm)
+    patient.params.current.value = item_id
+    print(patient.params.current.value, patient.params.current.button_text)
+    print(patient.params.current)
+    set_patient(dm, patient)
     await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
 
 

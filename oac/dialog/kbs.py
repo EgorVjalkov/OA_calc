@@ -1,15 +1,12 @@
 import operator
 
-from aiogram_dialog.widgets.kbd import ScrollingGroup, Select, Column, Row, Button, Back, Group, Checkbox
-from aiogram_dialog.widgets.text import Const, Format
-
-from oac.dialog.patientparameter import PatientParameter
-
+from aiogram_dialog.widgets.kbd import ScrollingGroup, Select, Group
+from aiogram_dialog.widgets.text import Format
 
 SCROLLING_HEIGHT = 1
 
 
-def group_kb_for_patient_params_menu(on_click, id_: str, select_items: str,):
+def group_kb_by_attr(on_click, id_: str, select_items: str, ):
     group_id = f'g_{id_}'
     select_id = f's_{id_}'
     return Group(
@@ -25,7 +22,7 @@ def group_kb_for_patient_params_menu(on_click, id_: str, select_items: str,):
     )
 
 
-def group_kb_for_func_menu(on_click, id_: str, select_items: str):
+def group_kb_by_item(on_click, id_: str, select_items: str):
     group_id = f'g_{id_}'
     select_id = f's_{id_}'
     return Group(
@@ -33,22 +30,6 @@ def group_kb_for_func_menu(on_click, id_: str, select_items: str):
             Format('{item[0]}'),
             id=select_id,
             item_id_getter=operator.itemgetter(1),
-            items=select_items,
-            on_click=on_click
-        ),
-        id=group_id,
-        width=1
-    )
-
-
-def group_kb_for_parameter_menu(on_click, id_: str, select_items: str, ):
-    group_id = f'g_{id_}'
-    select_id = f's_{id_}'
-    return Group(
-        Select(
-            Format('{item.button_text}'), #
-            id=select_id,
-            item_id_getter=operator.attrgetter('id'),
             items=select_items,
             on_click=on_click
         ),

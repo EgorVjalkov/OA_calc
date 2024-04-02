@@ -5,6 +5,7 @@ from dataclasses import dataclass, InitVar
 from oac.dialog.variants_with_id import variants, topics
 from oac.program_logic.blood_counter import BloodVolCounter
 from oac.program_logic.drag import DragCounter
+from oac.program_logic.sma import SmaCounter
 from oac.dialog.patientparameter import load_parameters, Btn, PatientParameter, ComplexParameter
 
 
@@ -17,10 +18,13 @@ class ParametersForCurrentFunc:
     def __post_init__(self):
         self.data: Dict[str, PatientParameter] = load_parameters()
 
-    def set_current_params(self, func_id):
+    def set_current_params(self, func_id) -> dict:
         self.current_params = {i: self.data[i] for i in self.data
                                if func_id in self.data[i].func_ids}
         return self.current_params
+
+    def get_values(self):
+        return {i: self.current_params[i].value for i in self.current_params}
 
     @property
     def parameter_id(self):
@@ -80,40 +84,18 @@ class Patient:
     def topic(self):
         return topics[self.func_id]
 
-    @property
-    def func_is_ready(self):
-        return self.func is not None
+    def change_func(self) -> object:
+        values = self.params.get_values()
 
-    def load_parameters(self) -> ParametersForCurrentFunc:
-        self.params = ParametersForCurrentFunc(self.func_id)
-        return self.params
+        match self.func_id:
+            case 'blood_vol_count':
+                self.func = BloodVolCounter(**values)
+            case 'drag_count':
+                self.func = DragCounter(**values)
+            case 'sma_count':
+                self.func = SmaCounter(**values)
 
-    def match_ctx_data(self, data: dict) -> object:
-        match self.func_id, data:
-            case ['blood_vol_count',
-                  {'height': h, 'weight': w, 'weight_before': b}]:
-                self.func = BloodVolCounter(h, w, b)
-
-            case ['drag_count',
-                  {'weight': weight}]:
-                self.func = DragCounter(weight)
-
-        self.variants_for_tg = self.get_variants(data)
         return self
-
-    def get_variants(self, ctx_data) -> list:
-        variants_for_tg = variants[self.func_id].copy()
-        for i in variants_for_tg:
-            match i:
-                case [btn_text, btn_id] if btn_id in ctx_data:
-                    ind = variants_for_tg.index(i)
-                    value = ctx_data[btn_id]
-                    variants_for_tg[ind] = (f'{btn_text}: {value}', btn_id)
-
-        if self.func_is_ready:
-            variants_for_tg.append(('рассчитать', 'count'))
-
-        return variants_for_tg
 
     def get_result(self) -> list:
         result = self.func()

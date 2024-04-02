@@ -14,7 +14,7 @@ def greet_window() -> Window:
     return Window(
         Const('Привет, это бот для расчетов в акушерской анестезиологии. '
               'Что считаем?'),
-        kbs.group_kb_for_func_menu(selected.on_chosen_func,
+        kbs.group_kb_by_item(selected.on_chosen_func,
                              'func', 'funcs'),
         SwitchTo(Const('никаких задач'),
                  id='sw_finish',
@@ -34,10 +34,10 @@ def sma_confirm_window():
     )
 
 
-def input_patient_data_window() -> Window:
+def select_patient_patameter_menu() -> Window:
     return Window(
         Format('{topic}'),
-        kbs.group_kb_for_patient_params_menu(selected.on_chosen_patient_data,
+        kbs.group_kb_by_attr(selected.on_chosen_patient_parameter,
                                              'pat_param', 'patient_parameters'),
         SwitchTo(Const('<< назад'),
                  id='sw_func_menu',
@@ -60,10 +60,11 @@ def input_window() -> Window:
     )
 
 
-def select_window() -> Window:
+def change_param_value_menu() -> Window:
     return Window(
         Format('{topic}'),
-        kbs.group_kb_for_func_menu(selected.on_chosen_parameter_value, id_='ch_param', select_items='param_vars'),
+        kbs.group_kb_by_attr(selected.on_chosen_parameter_value,
+                             id_='ch_param', select_items='param_values'),
         SwitchTo(Const('<< назад'),
                  id='sw_to_in_menu',
                  state=PatientDataInput.patient_parameters_menu),
@@ -100,8 +101,8 @@ def finish_window():
 
 dialog = Dialog(greet_window(),
                 sma_confirm_window(),
-                input_patient_data_window(),
-                select_window(),
+                select_patient_patameter_menu(),
+                change_param_value_menu(),
                 input_window(),
                 report_window(),
                 finish_window(),
