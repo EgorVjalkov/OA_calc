@@ -62,8 +62,6 @@ async def on_entered_parameter_value(m: Message,
 
     patient = get_patient(dm)
     patient.params.current.value = int(input_data)
-    print(patient.params.current.value, patient.params.current.button_text)
-    print(patient.params.current)
     set_patient(dm, patient)
     await dm.switch_to(PatientDataInput.patient_parameters_menu)
 

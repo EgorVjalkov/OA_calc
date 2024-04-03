@@ -4,16 +4,20 @@ from aiogram_dialog import DialogManager
 from aiogram.fsm.state import State
 
 from oac.dialog.states import PatientDataInput
-from oac.program_logic.function import PatientParameter, Function
-from oac.program_logic.patient import Patient, ParametersForCurrentFunc
-from oac.dialog.variants_with_id import get_dict_with_variants, variants
-from oac.dialog.patientparameter import PatientParameter
-from oac.dialog.selected import get_patient, set_patient
+from oac.program_logic.patient import Patient
+from oac.dialog.variants_with_id import funcs
+from oac.dialog.selected import get_patient
 
 
 async def get_funcs(dialog_manager: DialogManager,
                     **middleware_data) -> dict:
-    return get_dict_with_variants('funcs')
+    data = {'funcs': funcs}
+    patient = get_patient(dialog_manager)
+    if not patient.is_results_empty:
+        data['finish'] = 'печать результатов'
+    else:
+        data['finish'] = 'никаких задач'
+    return data
 
 
 async def get_data_for_pat_params_menu(dialog_manager: DialogManager,
@@ -42,8 +46,9 @@ async def get_report(dialog_manager: DialogManager,
 
     match ctx.state, patient:
         case [State(state=PatientDataInput.print_report), p]:
-
-            p.get_result()
+            p.change_func().get_result()
+            # result = p.get_reports(last=True)
+            # await dialog_manager.event.message.answer(result)
             return {'result': patient.get_reports(last=True)}
 
         case [State(state=PatientDataInput.print_finish_session_report),

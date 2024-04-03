@@ -8,7 +8,7 @@ from oac.My_token import TOKEN, TESTTOKEN
 from oac.dialog import start_handler
 from oac.dialog.windows import dialog
 
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 
 async def main():

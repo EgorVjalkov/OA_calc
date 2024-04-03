@@ -1,64 +1,18 @@
-from typing import Optional, Dict, KeysView
+from typing import Optional
 from collections import defaultdict
-from dataclasses import dataclass, InitVar
 
-from oac.dialog.variants_with_id import variants, topics
+from oac.dialog.variants_with_id import topics
+from oac.program_logic.parameters import ParametersForCurrentFunc
 from oac.program_logic.blood_counter import BloodVolCounter
 from oac.program_logic.drag import DragCounter
 from oac.program_logic.sma import SmaCounter
-from oac.dialog.patientparameter import load_parameters, Btn, PatientParameter, ComplexParameter
-
-
-@dataclass
-class ParametersForCurrentFunc:
-    #current_func_id: Optional[str] = None
-    current_params: Optional[dict] = None
-    current_parameter_id: Optional[str] = None
-
-    def __post_init__(self):
-        self.data: Dict[str, PatientParameter] = load_parameters()
-
-    def set_current_params(self, func_id) -> dict:
-        self.current_params = {i: self.data[i] for i in self.data
-                               if func_id in self.data[i].func_ids}
-        return self.current_params
-
-    def get_values(self):
-        return {i: self.current_params[i].value for i in self.current_params}
-
-    @property
-    def parameter_id(self):
-        return self.current_parameter_id
-
-    @parameter_id.setter
-    def parameter_id(self, param_id_from_tg: str) -> None:
-        self.current_parameter_id = param_id_from_tg
-
-    @property
-    def current(self) -> PatientParameter | ComplexParameter:
-        return self.data.get(self.current_parameter_id)
-
-    #@property
-    #def necessary_params(self) -> KeysView:
-    #    return self.data.keys()
-
-    @property
-    def all_params_filled(self) -> bool:
-        values = [i for i in self.current_params if not self.current_params[i].value]
-        return len(values) == 0
-
-    def get_btns(self) -> list:
-        btns_list = [Btn(self.data[i].button_text, i) for i in self.current_params]
-        if self.all_params_filled:
-            btns_list.append(Btn('рассчитать', 'count'))
-        return btns_list
 
 
 class Patient:
     def __init__(self):
         self.current_function_id: Optional[str] = None
         self.params = ParametersForCurrentFunc()
-        self.func: Optional[BloodVolCounter | DragCounter] = None
+        self.func: Optional[BloodVolCounter | DragCounter | SmaCounter] = None
         self.results = defaultdict(dict)
 
         self.variants_for_tg: Optional[list] = None
@@ -99,22 +53,12 @@ class Patient:
 
     def get_result(self) -> list:
         result = self.func()
-        params = self.extract_parameters()
+        params = self.params.extract()
         self.results[self.func_id].update({
             'parameters': params,
             'result': result})
-        self.func = None
+        self.func = None   # ???
         return result
-
-    def extract_parameters(self) -> dict:
-        params = self.func.__dict__
-        variants_dict = dict(variants[self.func_id])
-        print(variants_dict)
-        translated_params = {i: params[variants_dict[i]]
-                             for i in variants_dict}
-
-        # translated_params = [f"{i} - {translated_params[i]}" for i in translated_params]
-        return translated_params
 
     def get_reports(self, last: bool = False) -> str:
         answer = []
@@ -128,8 +72,7 @@ class Patient:
         for result in result_keys:
             answer.append("Для пациента с параметрами:")
             params = self.results[result]['parameters']
-            params = [f"{i} - {params[i]}" for i in params]
-            answer.extend(list(params))
+            answer.extend(list(params.values()))
             answer.append('получены результаты:')
             result = self.results[result]['result']
             answer.append(result)
@@ -139,21 +82,3 @@ class Patient:
     @property
     def is_results_empty(self):
         return len(self.results) == 0
-
-
-def func_test(patient: Patient, ctx_data: dict):
-    patient.match_ctx_data(ctx_data)
-    print(f'id - {ctx_data["func_id"]}')
-    print(f'vars - {patient.variants_for_tg}')
-    print(f'func - {patient.func}')
-
-
-if __name__ == '__main__':
-
-    pat = Patient()
-    pat.func_id = 'blood_vol_count'
-    pat.load_parameters()
-    pat.params.parameter_id = 'weight'
-    pat.params.current.value = 100
-    print(pat.params.current)
-

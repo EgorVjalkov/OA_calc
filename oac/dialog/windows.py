@@ -12,11 +12,11 @@ from oac.dialog.variants_with_id import sma_confirm_text
 
 def greet_window() -> Window:
     return Window(
-        Const('Привет, это бот для расчетов в акушерской анестезиологии. '
+        Const('Привет, я - бот для расчетов в акушерской анестезиологии. '
               'Что считаем?'),
         kbs.group_kb_by_item(selected.on_chosen_func,
                              'func', 'funcs'),
-        SwitchTo(Const('никаких задач'),
+        SwitchTo(Format('{finish}'),
                  id='sw_finish',
                  state=PatientDataInput.print_finish_session_report),
         state=PatientDataInput.func_menu,

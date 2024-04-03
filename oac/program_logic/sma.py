@@ -1,80 +1,80 @@
 from dataclasses import dataclass
+from oac.program_logic.my_table import get_my_table_string
+
+bmi_dict = {
+        18.5: {'inter': 'дефицит', 'count': -1, 'blood_vol_coef': 100},
+        25.0: {'inter': 'норма', 'count': -1, 'blood_vol_coef': 100},
+        30.0: {'inter': 'избыток', 'count': 0, 'blood_vol_coef': 100},
+        35.0: {'inter': 'ожирение 1', 'count': 1, 'blood_vol_coef': 100},
+        40.0: {'inter': 'ожирение 2', 'count': 2, 'blood_vol_coef': 85},
+        100.0: {'inter': 'ожирение 3', 'count': 3, 'blood_vol_coef': 85}
+}
+
+bupivacaine_dosage = {
+    145: [1.5, 1.4, 1.4, 1.3, 1.2, 1.1, 1.0],
+    150: [1.9, 1.8, 1.7, 1.5, 1.4, 1.4, 1.3],
+    155: [2.1, 2.0, 1.8, 1.7, 1.6, 1.5, 1.4],
+    160: [2.3, 2.2, 2.0, 1.9, 1.8, 1.6, 1.5],
+    165: [2.4, 2.3, 2.2, 2.0, 1.9, 1.7, 1.6],
+    170: [2.6, 2.4, 2.3, 2.1, 2.0, 1.8, 1.6],
+    175: [2.8, 2.6, 2.4, 2.3, 2.1, 1.9, 1.8],
+    180: [2.9, 2.8, 2.5, 2.4, 2.2, 2.0, 1.9]
+}
 
 
 @dataclass
 class SmaCounter:
-    height: int
     weight: int
-    fetus: int
-    bladder: int
-    discomfort: int
+    height: int
+    fetus_count: int
+    bladder_count: int
+    discomfort_count: int
 
-    def get_bmi(self, weight):
-        self.bmi = round(weight / pow(self.height / 100, 2), 1)
-        return self.bmi
+    def __post_init__(self):
+        bmi = round(self.weight / pow(self.height / 100, 2), 1)
+        for i in bmi_dict.keys():
+            if bmi < i:
+                self.bmi_count = bmi_dict[i]['count']
+                break
 
+    def count_a_sum(self) -> int:
+        sum_of_factors = sum((self.bmi_count, self.fetus_count, self.bladder_count))
 
-# counting sum of factors
-def count_risk_factors(self, answers=()):
-    for rf in self.risk_factors:
-        rf = RiskFactor(rf, risk_factor_dict)
-        if rf.name == 'bmi':
-            rf_dict = rf.get_bmi_risk_count(self.bmi)
-            print(f'ИМТ - {self.bmi}, ({rf_dict["interpretation"]})')
+        if sum_of_factors <= 0 and self.discomfort_count:
+            sum_of_factors += self.discomfort_count
 
-        else:
-            if rf.name in answers and answers[rf.name]:
-                rf_dict = rf.find_risk_factor_with_answer(answers[rf.name])
-            else:
-                rf_dict = rf.input_risk_factor_and_get_count()
+        if sum_of_factors >= 4:
+            sum_of_factors = 4
 
-        print(f'{rf.name} riskfactor is {rf_dict["count"]}', '\n')
-        self.factors_count_dict.update({rf.name: rf_dict['count']})
-        self.patient_data_for_spinal.update(
-            {f'{rf.name}_{k}': rf_dict[k] for k in rf_dict if k in ['interpretation', 'count']})
+        return sum_of_factors
 
-    return self.risk_factors
+    def get_bupivacaine_dose(self, sum_of_risk) -> float:
+        match self.height:
+            case h if h < 145:
+                h = 145
+            case h if h > 180:
+                h = 180
+            case h:
+                for i in bupivacaine_dosage.keys():
+                    if h < i:
+                        h = i
+                        break
 
+        return bupivacaine_dosage[h][sum_of_risk+2]
 
-def count_a_sum(self):
-    back_discomfort_count = self.factors_count_dict.pop('back_discomfort')
-    self.sum_of_factors = sum(list(self.factors_count_dict.values()))
-    # присмотрись протестируй
-    if self.sum_of_factors <= 0 and back_discomfort_count:
-        self.sum_of_factors += back_discomfort_count
-    elif self.sum_of_factors > 0 and back_discomfort_count:
-        self.patient_data_for_spinal['back_discomfort_count'] = 'not using'
-        print('данные о дискомфорте в положении на спине не использованы')
-
-    self.patient_data_for_spinal['sum'] = self.sum_of_factors
-    self.patient_data_for_spinal['limiting sum'] = False
-
-    if self.sum_of_factors >= 4:
-        self.sum_of_factors = 4
-        self.patient_data_for_spinal['limiting sum'] = 4
-
-    print(f'сумма факторов риска - {self.sum_of_factors}', '\n')
-    return self.sum_of_factors
+    def __call__(self, *args, **kwargs) -> str:
+        dose_for_lying = self.get_bupivacaine_dose(self.count_a_sum())
+        dose_for_sitting = round(dose_for_lying+0.4, 1)
+        # first = ['Доза при пункции в положении:', '']
+        rows = [
+            ['Доза при пункции в положении:', ''],
+            ['лежа', f'{dose_for_lying}мл'],
+            ['cидя', f'{dose_for_sitting}мл'],
+        ]
+        return get_my_table_string(fields=[], rows=rows, header=False)
 
 
-def get_bupivacaine_dose(self, sum_of_risk, bupivacaine_dosage):
-    if self.height not in bupivacaine_dosage.keys():
-        if self.height < 145:
-            rounded_height = 145
-        elif self.height > 180:
-            rounded_height = 180
-        else:
-            rounded_height = self.height
-            while rounded_height % 5 > 0:
-                rounded_height += 1
-    else:
-        rounded_height = self.height
+if __name__ == '__main__':
+    sma = SmaCounter(60, 167, 0, -1, 1)
+    print(sma())
 
-    counted_dose = bupivacaine_dosage[rounded_height][sum_of_risk + 2]
-    counted_dose_for_sitting = round(counted_dose + 0.4, 1)
-    self.patient_data_for_spinal['counted dose'] = counted_dose
-    self.patient_data_for_spinal['counted dose for sitting'] = counted_dose_for_sitting
-    print(f'0,5% доза тяжелого бупивакаина в положении лежа {counted_dose}ml\n')
-    print(f'0,5% доза тяжелого бупивакаина в положении сидя {counted_dose_for_sitting}ml\n')
-
-    return counted_dose

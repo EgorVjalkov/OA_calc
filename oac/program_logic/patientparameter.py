@@ -64,6 +64,10 @@ class ComplexParameter(BaseParameter):
         return f'ComplexParameter({self.id}={self.default_value})'
 
     @property
+    def count(self):
+        return self.variants[self.value].sma_risk_factor_count
+
+    @property
     def button_text(self):
         if self.value:
             variant = self.variants[self.value]
@@ -78,9 +82,8 @@ class ComplexParameter(BaseParameter):
 def load_parameters() -> dict:
     params_dict = {}
     # path = 'parameters.xlsx'
-    path = 'dialog/parameters.xlsx'
+    path = 'program_logic/data/parameters.xlsx'
     param_df = pd.read_excel(path, sheet_name='parameters', dtype=object)
-    print(param_df)
     comp_param_btns_df = pd.read_excel(path, sheet_name='parameter_menu', dtype=object)
     # filtered = param_df.func_id.map(lambda i: func_id in i)
     # param_df = param_df[filtered == True]
@@ -96,10 +99,8 @@ def load_parameters() -> dict:
             variants = [CompParamMenuBtn(**variants.loc[i].to_dict()) for i in variants.index]
             row_dict = row.to_dict()
             row_dict.update({'variants': {i.id: i for i in variants}})
-            print(row_dict)
             parameter = ComplexParameter(**row_dict)
 
         params_dict[parameter.id] = parameter
-    print(params_dict)
     return params_dict
 
