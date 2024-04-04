@@ -20,10 +20,12 @@ class ParametersForCurrentFunc:
     def get_values(self):
         values = {}
         for i in self.current_params:
-            if isinstance(self.current_params[i], ComplexParameter):
-                values[f'{i}_count'] = self.current_params[i].count
-            else:
-                values[i] = self.current_params[i].value
+            match self.current_params[i]:
+                case ComplexParameter():
+                    values[f'{i}_count'] = self.current_params[i].count
+                case PatientParameter():
+                    values[i] = self.current_params[i].value
+        print(values)
         return values
 
     def extract(self):

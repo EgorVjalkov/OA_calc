@@ -1,4 +1,24 @@
 from oac.program_logic.patient import Patient
+from dataclasses import dataclass, fields
+
+
+@dataclass
+class A:
+    a: str
+    b: str
+
+
+@dataclass
+class B(A):
+    c: str
+
+
+argsA = ['1', '2']
+argsB = ['1', '2', '3']
+a = A(*argsA)
+b = B(a='1', b='2', c='3')
+print(fields(b))
+
 
 
 if __name__ == '__main__':

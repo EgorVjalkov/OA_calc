@@ -1,15 +1,11 @@
 from dataclasses import dataclass
-from typing import Optional, Dict
+from typing import Optional, Dict, NamedTuple
+from collections import namedtuple
 
 import pandas as pd
 
 
-@dataclass
-class Btn:
-    text: str
-    id: str
-
-# здесь надо замутить рефактор
+Btn = namedtuple('Btn', 'text id')
 
 
 @dataclass
@@ -32,13 +28,9 @@ class BaseParameter:
     fill_by_text_input: bool
     topic: str
     default_value: Optional[int | str] = None
-    variants: Optional[Dict[str, CompParamMenuBtn]] = None
 
     def __post_init__(self):
         self.fill_by_text_input = bool(self.fill_by_text_input)
-
-    def __repr__(self):
-        return f'PatientParameter({self.id}={self.default_value})'
 
     @property
     def value(self):
@@ -49,7 +41,11 @@ class BaseParameter:
         self.default_value = new_value
 
 
+@dataclass
 class PatientParameter(BaseParameter):
+
+    def __repr__(self):
+        return f'PatientParameter({self.id}={self.default_value})'
 
     @property
     def button_text(self): # get????
@@ -59,7 +55,10 @@ class PatientParameter(BaseParameter):
             return self.btn_text
 
 
+@dataclass
 class ComplexParameter(BaseParameter):
+    variants: Optional[Dict[str, CompParamMenuBtn]] = None
+
     def __repr__(self):
         return f'ComplexParameter({self.id}={self.default_value})'
 
