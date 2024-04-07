@@ -1,11 +1,24 @@
-from dataclasses import dataclass
-from typing import Optional, Dict, NamedTuple
+import dataclasses
+from dataclasses import dataclass, InitVar
+from typing import Optional, Dict, NamedTuple, Type
 from collections import namedtuple
 
 import pandas as pd
 
 
 Btn = namedtuple('Btn', 'text id')
+
+
+@dataclass
+class Limits:
+    min: int
+    max: int
+
+    def __contains__(self, item: int):
+        if self.min <= item <= self.max:
+            return True
+        else:
+            return False
 
 
 @dataclass
@@ -26,8 +39,8 @@ class BaseParameter:
     btn_text: str
     btn_text_filled: str
     fill_by_text_input: bool
-    topic: str
-    default_value: Optional[int | str] = None
+    _topic: str
+    default_value: [int | str]
 
     def __post_init__(self):
         self.fill_by_text_input = bool(self.fill_by_text_input)
@@ -40,15 +53,36 @@ class BaseParameter:
     def value(self, new_value):
         self.default_value = new_value
 
+    @property
+    def topic(self):
+        return self._topic
+
 
 @dataclass
 class PatientParameter(BaseParameter):
+    limits: InitVar[str]
+
+    def __post_init__(self, limits):
+        l_list = [int(i) for i in limits.split()]
+        self.limits: Limits = Limits(*l_list)
 
     def __repr__(self):
         return f'PatientParameter({self.id}={self.default_value})'
 
     @property
-    def button_text(self): # get????
+    def value(self):
+        return self.default_value
+
+    @value.setter
+    def value(self, new_value):
+        self.default_value = new_value
+
+    @property
+    def topic(self):
+        return f'{self._topic}. Допустимые значения в интервале от {self.limits.min} до {self.limits.max}.'
+
+    @property
+    def button_text(self):
         if self.value:
             return self.btn_text_filled.format(self.value)
         else:
@@ -96,9 +130,13 @@ def load_parameters() -> dict:
             variants = comp_param_btns_df[comp_param_btns_df.parameter_id == row.id]
             del variants['parameter_id']
             variants = [CompParamMenuBtn(**variants.loc[i].to_dict()) for i in variants.index]
+
             row_dict = row.to_dict()
             row_dict.update({'variants': {i.id: i for i in variants}})
-            parameter = ComplexParameter(**row_dict)
+
+            cls_fields = [i.name for i in dataclasses.fields(ComplexParameter)]
+            parameter = ComplexParameter(*[row_dict[i] for i in row_dict if i in cls_fields])
+        print(parameter)
 
         params_dict[parameter.id] = parameter
     return params_dict

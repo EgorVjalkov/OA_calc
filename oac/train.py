@@ -1,25 +1,10 @@
 from oac.program_logic.patient import Patient
 from dataclasses import dataclass, fields
+from collections import namedtuple
 
-
-@dataclass
-class A:
-    a: str
-    b: str
-
-
-@dataclass
-class B(A):
-    c: str
-
-
-argsA = ['1', '2']
-argsB = ['1', '2', '3']
-a = A(*argsA)
-b = B(a='1', b='2', c='3')
-print(fields(b))
-
-
+Limits = namedtuple('Limits', 'min max')
+lims = '40 160'
+limits = Limits(*lims.split())
 
 if __name__ == '__main__':
     patient = Patient()
@@ -30,7 +15,7 @@ if __name__ == '__main__':
     patient.params.current.value = 'big_f'
 
     patient.params.parameter_id = 'weight'
-    patient.params.current.value = 67
+    patient.params.current.value = 161
 
     patient.params.parameter_id = 'height'
     patient.params.current.value = 167

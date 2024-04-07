@@ -61,9 +61,15 @@ async def on_entered_parameter_value(m: Message,
         return
 
     patient = get_patient(dm)
-    patient.params.current.value = int(input_data)
-    set_patient(dm, patient)
-    await dm.switch_to(PatientDataInput.patient_parameters_menu)
+    input_data = int(input_data)
+    if input_data in patient.params.current.limits:
+        patient.params.current.value = int(input_data)
+        set_patient(dm, patient)
+        await dm.switch_to(PatientDataInput.patient_parameters_menu)
+
+    else:
+        await m.answer('Вы превысили допустимое значение.')
+        return
 
 
 async def on_chosen_parameter_value(m: CallbackQuery,

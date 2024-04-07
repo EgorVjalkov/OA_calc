@@ -15,10 +15,11 @@ class BloodVolCounter:
 
     @property
     def blood_volume(self):
+        weight_for_calc = min((self.weight, self.weight_before))
         if self.bmi_before_preg < 40:
-            blood_volume = 100 * self.weight_before
+            blood_volume = 100 * weight_for_calc
         else:
-            blood_volume = 80 * self.weight_before
+            blood_volume = 80 * weight_for_calc
         return blood_volume
 
     def count_bleed_volume(self, percents: tuple):
