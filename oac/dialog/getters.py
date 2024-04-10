@@ -36,7 +36,7 @@ async def get_topic_for_input(dialog_manager: DialogManager,
 async def get_kb_for_select_parameter(dialog_manager: DialogManager,
                                       **middleware_data) -> dict:
     patient = get_patient(dialog_manager)
-    return {'param_values': patient.params.get_btns(), 'topic': patient.params.current.topic}
+    return {'param_values': patient.params.current.get_btns(), 'topic': patient.params.current.topic}
 
 
 async def get_report(dialog_manager: DialogManager,

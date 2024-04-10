@@ -11,6 +11,7 @@ class ParametersForCurrentFunc:
 
     def __post_init__(self):
         self.data: Dict[str, PatientParameter] = load_parameters()
+        print(self.data.values())
 
     def set_current_params(self, func_id) -> dict:
         self.current_params = {i: self.data[i] for i in self.data
