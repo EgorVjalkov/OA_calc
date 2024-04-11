@@ -45,6 +45,9 @@ class BaseParameter:
     def __post_init__(self):
         self.fill_by_text_input = bool(self.fill_by_text_input)
 
+    def __repr__(self):
+        return f'BaseParameter({self.id}={self.default_value})'
+
     @property
     def value(self):
         return self.default_value
@@ -57,30 +60,6 @@ class BaseParameter:
     def topic(self):
         return self._topic
 
-
-@dataclass
-class PatientParameter(BaseParameter):
-    limits: InitVar[str]
-
-    def __post_init__(self, limits):
-        l_list = [int(i) for i in limits.split()]
-        self.limits: Limits = Limits(*l_list)
-
-    def __repr__(self):
-        return f'PatientParameter({self.id}={self.default_value})'
-
-    @property
-    def value(self):
-        return self.default_value
-
-    @value.setter
-    def value(self, new_value):
-        self.default_value = new_value
-
-    @property
-    def topic(self):
-        return f'{self._topic}. Допустимые значения в интервале от {self.limits.min} до {self.limits.max}.'
-
     @property
     def button_text(self):
         if self.value:
@@ -90,7 +69,23 @@ class PatientParameter(BaseParameter):
 
 
 @dataclass
-class ComplexParameter(BaseParameter):
+class LimitedParameter(BaseParameter):
+    limits: str
+
+    def __post_init__(self):
+        l_list = [int(i) for i in self.limits.split()]
+        self.limits: Limits = Limits(*l_list)
+
+    def __repr__(self):
+        return f'LimitedParameter({self.id}={self.default_value})'
+
+    @property
+    def topic(self):
+        return f'{self._topic}. Допустимые значения в интервале от {self.limits.min} до {self.limits.max}.'
+
+
+@dataclass
+class SelectedParameter(BaseParameter):
     variants: Optional[Dict[str, CompParamMenuBtn]] = None
 
     def __repr__(self):
@@ -112,6 +107,12 @@ class ComplexParameter(BaseParameter):
         return [i.make_button() for i in self.variants.values()]
 
 
+def init_example_by_fields(cls, kwargs_dict) -> BaseParameter:
+    cls_fields = [i.name for i in dataclasses.fields(cls)]
+    print([kwargs_dict[i] for i in kwargs_dict if i in cls_fields])
+    return cls(*[kwargs_dict[i] for i in kwargs_dict if i in cls_fields])
+
+
 def load_parameters() -> dict:
     params_dict = {}
     # path = 'parameters.xlsx'
@@ -123,21 +124,28 @@ def load_parameters() -> dict:
     # del param_df['func_id']
 
     for param_row in param_df.index:
-        row = param_df.loc[param_row]
-        if row.fill_by_text_input:
-            parameter = PatientParameter(**row.to_dict())
-        else:
-            variants = comp_param_btns_df[comp_param_btns_df.parameter_id == row.id]
-            del variants['parameter_id']
-            variants = [CompParamMenuBtn(**variants.loc[i].to_dict()) for i in variants.index]
+        parameter = None
+        row_dict = param_df.loc[param_row].to_dict()
+        print(row_dict['id'], row_dict['fill_by_text_input'], row_dict['limits'])
 
-            row_dict = row.to_dict()
-            row_dict.update({'variants': {i.id: i for i in variants}})
+        match row_dict:
+            case {'fill_by_text_input': 1, 'limits': 'no limits'}:
+                parameter = init_example_by_fields(BaseParameter, row_dict)
 
-            cls_fields = [i.name for i in dataclasses.fields(ComplexParameter)]
-            parameter = ComplexParameter(*[row_dict[i] for i in row_dict if i in cls_fields])
+            case {'fill_by_text_input': 1}:
+                parameter = init_example_by_fields(LimitedParameter, row_dict)
+
+            case {'fill_by_text_input': 0}:
+                variants = comp_param_btns_df[comp_param_btns_df.parameter_id == row_dict['id']]
+                variants = [init_example_by_fields(CompParamMenuBtn, variants.loc[i].to_dict())
+                            for i in variants.index]
+                #variants = [CompParamMenuBtn(**variants.loc[i].to_dict()) for i in variants.index]
+                row_dict.update({'variants': {i.id: i for i in variants}})
+                parameter = init_example_by_fields(SelectedParameter, row_dict)
+            case l:
+                print('error')
         print(parameter)
-
         params_dict[parameter.id] = parameter
+
     return params_dict
 

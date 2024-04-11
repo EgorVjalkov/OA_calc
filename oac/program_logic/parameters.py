@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional, Dict
 
-from oac.program_logic.patientparameter import load_parameters, Btn, PatientParameter, ComplexParameter
+from oac.program_logic.patientparameter import (load_parameters, Btn,
+                                                LimitedParameter, SelectedParameter, BaseParameter)
 
 
 @dataclass
@@ -10,7 +11,7 @@ class ParametersForCurrentFunc:
     current_parameter_id: Optional[str] = None
 
     def __post_init__(self):
-        self.data: Dict[str, PatientParameter] = load_parameters()
+        self.data: Dict[str, LimitedParameter] = load_parameters()
         print(self.data.values())
 
     def set_current_params(self, func_id) -> dict:
@@ -22,9 +23,9 @@ class ParametersForCurrentFunc:
         values = {}
         for i in self.current_params:
             match self.current_params[i]:
-                case ComplexParameter():
+                case SelectedParameter():
                     values[f'{i}_count'] = self.current_params[i].count
-                case PatientParameter():
+                case BaseParameter():
                     values[i] = self.current_params[i].value
         print(values)
         return values
@@ -41,7 +42,7 @@ class ParametersForCurrentFunc:
         self.current_parameter_id = param_id_from_tg
 
     @property
-    def current(self) -> PatientParameter | ComplexParameter:
+    def current(self) -> LimitedParameter | SelectedParameter:
         return self.data.get(self.current_parameter_id)
 
     @property

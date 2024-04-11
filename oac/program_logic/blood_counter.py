@@ -40,20 +40,24 @@ class BloodVolCounter:
         return get_my_table_string(fields=[], rows=rows, header=False)
 
 
-class BleedCounter:
-    def __init__(self, blood_vol: int):
-        self.blood_vol = blood_vol
+@dataclass
+class BleedCounter(BloodVolCounter):
+    bleed_vol: int
 
-    def count_bleed_volume(self, percents: tuple):
-        def get_bleed_vol(percent):
-            return int((percent / 100) * self.blood_vol)
+    def count_a_percent(self):
+        return int(self.bleed_vol / self.blood_volume * 100)
 
-        vol_list = [str(get_bleed_vol(percent)) for percent in percents]
-        return vol_list
+    def __call__(self, *args, **kwargs):
+        percent = self.count_a_percent()
+        rows = [
+            ['Oбъем ОЦК', f'~ {self.blood_volume}мл'],
+            ['кровопотеря', f'~ {percent}%'],
+        ]
+        return get_my_table_string(fields=[], rows=rows, header=False)
 
 
 if __name__ == '__main__':
-    data = {'weight': 56, 'height': 146, 'weight_before': 52}
-    a = BloodVolCounter(**data)
+    data = {'weight': 56, 'height': 146, 'weight_before': 52, 'bleed_vol': 1000}
+    a = BleedCounter(**data)
     rep = a()
     print(rep)

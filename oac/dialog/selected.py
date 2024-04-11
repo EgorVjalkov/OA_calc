@@ -5,6 +5,7 @@ from aiogram_dialog.widgets.input.text import TextInput
 
 from oac.dialog.states import PatientDataInput
 from oac.program_logic.patient import Patient
+from oac.program_logic.patientparameter import BaseParameter, LimitedParameter
 
 
 def get_patient(dm: DialogManager) -> Patient:
@@ -56,20 +57,25 @@ async def on_entered_parameter_value(m: Message,
                                      input_data: str,
                                      **kwargs):
 
-    if not input_data.isdigit():
-        await m.answer('Задайте число.')
-        return
-
+    # наверно можно упростить и дописать занчения
     patient = get_patient(dm)
-    input_data = int(input_data)
-    if input_data in patient.params.current.limits:
-        patient.params.current.value = int(input_data)
-        set_patient(dm, patient)
-        await dm.switch_to(PatientDataInput.patient_parameters_menu)
-
-    else:
-        await m.answer('Вы превысили допустимое значение.')
+    if not input_data.isdigit():
+        await m.answer("Недопустимое значение")
         return
+
+    match patient.params.current, int(input_data):
+        case LimitedParameter(), value if value in patient.params.current.limits:
+            patient.params.current.value = value
+            set_patient(dm, patient)
+            await dm.switch_to(PatientDataInput.patient_parameters_menu)
+
+        case BaseParameter(), value if value > 0:
+            patient.params.current.value = value
+            set_patient(dm, patient)
+            await dm.switch_to(PatientDataInput.patient_parameters_menu)
+
+        case _, _:
+            await m.answer('Недопустимое значение.')
 
 
 async def on_chosen_parameter_value(m: CallbackQuery,

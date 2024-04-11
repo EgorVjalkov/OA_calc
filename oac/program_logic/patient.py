@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from oac.dialog.variants_with_id import topics
 from oac.program_logic.parameters import ParametersForCurrentFunc
-from oac.program_logic.blood_counter import BloodVolCounter
+from oac.program_logic.blood_counter import BloodVolCounter, BleedCounter
 from oac.program_logic.drag import DragCounter
 from oac.program_logic.sma import SmaCounter
 
@@ -44,6 +44,8 @@ class Patient:
         match self.func_id:
             case 'blood_vol_count':
                 self.func = BloodVolCounter(**values)
+            case 'bleed_%_count':
+                self.func = BleedCounter(**values)
             case 'drag_count':
                 self.func = DragCounter(**values)
             case 'sma_count':
