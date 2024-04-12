@@ -2,10 +2,12 @@ from aiogram.types import CallbackQuery, Message
 from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.kbd import Select, Cancel, Button
 from aiogram_dialog.widgets.input.text import TextInput
+from aiogram import Bot
 
 from oac.dialog.states import PatientDataInput
 from oac.program_logic.patient import Patient
 from oac.program_logic.patientparameter import BaseParameter, LimitedParameter
+from oac.My_token import TOKEN, ADMIN_ID
 
 
 def get_patient(dm: DialogManager) -> Patient:
@@ -96,3 +98,13 @@ async def on_adieu(c: CallbackQuery,
                    dm: DialogManager,
                    **kwargs):
     await dm.event.answer("До свидания!")
+
+
+async def on_ask_a_question(m: Message,
+                            w: TextInput,
+                            dm: DialogManager,
+                            input_data: str,
+                            ** kwargs):
+    bot = Bot(TOKEN)
+    await bot.send_message(ADMIN_ID, input_data)
+    await m.answer('Спасибо. Сообщение отправлено')

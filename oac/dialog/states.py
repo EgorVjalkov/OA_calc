@@ -9,3 +9,7 @@ class PatientDataInput(StatesGroup):
     parameter_value_menu = State()
     print_report = State()
     print_finish_session_report = State()
+
+
+class FeedBack(StatesGroup):
+    ask_menu = State()

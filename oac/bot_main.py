@@ -4,20 +4,21 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram_dialog import setup_dialogs
 
-from oac.My_token import TOKEN, TESTTOKEN
+from oac.My_token import TOKEN
 from oac.dialog import start_handler
 from oac.dialog.windows import dialog
+from oac.dialog.ask_window import feedback_dialog
 
-# logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 
 async def main():
     storage = MemoryStorage()
-    #bot = Bot(TOKEN)
-    bot = Bot(TESTTOKEN)
+    bot = Bot(TOKEN)
     dp = Dispatcher(storage=storage)
     dp.include_router(start_handler.router)
     dp.include_router(dialog)
+    dp.include_router(feedback_dialog)
     setup_dialogs(dp)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
