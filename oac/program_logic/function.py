@@ -1,6 +1,6 @@
-from oac.dialog.variants_with_id import variants, answers
+from oac.dialogs.variants_with_id import variants, answers
 from oac.program_logic.spinal_dosage import Patient
-from oac.dialog.variants_with_id import topics
+from oac.dialogs.variants_with_id import topics
 
 
 class NecessaryArgs:

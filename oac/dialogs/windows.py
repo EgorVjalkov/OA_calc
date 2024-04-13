@@ -3,11 +3,11 @@ from aiogram_dialog.widgets.text import Const, Format
 from aiogram_dialog.widgets.kbd import Button, Start, Cancel, Back, SwitchTo
 from aiogram_dialog.widgets.input.text import TextInput
 
-from oac.dialog.states import PatientDataInput
-from oac.dialog import kbs
-from oac.dialog import selected
-from oac.dialog import getters
-from oac.dialog.variants_with_id import sma_confirm_text
+from oac.dialogs.states import PatientDataInput
+from oac.dialogs import kbs
+from oac.dialogs import selected
+from oac.dialogs import getters
+from oac.dialogs.variants_with_id import sma_confirm_text
 
 
 def greet_window() -> Window:
@@ -99,11 +99,11 @@ def finish_window():
     )
 
 
-dialog = Dialog(greet_window(),
-                sma_confirm_window(),
-                select_patient_patameter_menu(),
-                change_param_value_menu(),
-                input_window(),
-                report_window(),
-                finish_window(),
-                )
+patient_dialog = Dialog(greet_window(),
+                        sma_confirm_window(),
+                        select_patient_patameter_menu(),
+                        change_param_value_menu(),
+                        input_window(),
+                        report_window(),
+                        finish_window(),
+                        )

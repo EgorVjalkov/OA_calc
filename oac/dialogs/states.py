@@ -1,6 +1,11 @@
 from aiogram.filters.state import State, StatesGroup
 
 
+class MainMenu(StatesGroup):
+    func_menu = State()
+    print_theory = State()
+
+
 class PatientDataInput(StatesGroup):
     func_menu = State()
     sma_confirm = State()
