@@ -4,6 +4,7 @@ from aiogram.types import CallbackQuery, Message
 from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.kbd import Select, Cancel, Button
 from aiogram_dialog.widgets.input.text import TextInput
+from aiogram_dialog.api.exceptions import NoContextError
 
 from oac.dialogs.states import PatientDataInput
 from oac.program_logic.patient import Patient
@@ -15,7 +16,7 @@ def get_patient(dm: DialogManager) -> Optional[Patient]:
     try:
         ctx = dm.current_context()
         return ctx.start_data['patient']
-    except KeyError:
+    except NoContextError:
         return None
 
 

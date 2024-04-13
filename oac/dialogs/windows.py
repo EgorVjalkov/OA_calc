@@ -12,8 +12,9 @@ from oac.dialogs.variants_with_id import sma_confirm_text
 
 def greet_window() -> Window:
     return Window(
-        Const('Привет, я - бот для расчетов в акушерской анестезиологии. '
-              'Что считаем?'),
+        Const('''Привет, я - бот для расчетов в акушерской анестезиологии. 
+        /theory - запросить справку по функции.
+        /ask - задать вопрос разработчикам'''),
         kbs.group_kb_by_item(selected.on_chosen_func,
                              'func', 'funcs'),
         SwitchTo(Format('{finish}'),
@@ -38,7 +39,7 @@ def select_patient_patameter_menu() -> Window:
     return Window(
         Format('{topic}'),
         kbs.group_kb_by_attr(selected.on_chosen_patient_parameter,
-                                             'pat_param', 'patient_parameters'),
+                             'pat_param', 'patient_parameters'),
         SwitchTo(Const('<< назад'),
                  id='sw_func_menu',
                  state=PatientDataInput.func_menu),

@@ -5,7 +5,7 @@ from aiogram.fsm.state import State
 
 from oac.dialogs.states import PatientDataInput
 from oac.program_logic.patient import Patient
-from oac.dialogs.variants_with_id import funcs
+from oac.dialogs.variants_with_id import funcs, func_theory
 from oac.dialogs.selected import get_patient
 
 
@@ -16,7 +16,7 @@ async def get_funcs(dialog_manager: DialogManager,
     if not patient.is_results_empty:
         data['finish'] = 'печать результатов'
     else:
-        data['finish'] = 'не интересно'
+        data['finish'] = 'никаких задач'
     return data
 
 

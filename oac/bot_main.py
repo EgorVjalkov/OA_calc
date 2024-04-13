@@ -7,7 +7,7 @@ from aiogram_dialog import setup_dialogs
 from oac.My_token import TOKEN
 from oac.dialogs import commands
 from oac.dialogs.windows import patient_dialog
-from oac.dialogs.misc_dialogs.ask_window import feedback_dialog
+from oac.dialogs.misc_dialogs.misc_windows import feedback_dialog, theory_dialog
 
 logging.basicConfig(level=logging.INFO)
 
@@ -19,6 +19,7 @@ async def main():
     dp.include_router(commands.router)
     dp.include_router(patient_dialog)
     dp.include_router(feedback_dialog)
+    dp.include_router(theory_dialog)
     setup_dialogs(dp)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
