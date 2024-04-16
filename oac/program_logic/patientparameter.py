@@ -11,8 +11,8 @@ Btn = namedtuple('Btn', 'text id')
 
 @dataclass
 class Limits:
-    min: int
-    max: int
+    min: int | float
+    max: int | float
 
     def __contains__(self, item: int):
         if self.min <= item <= self.max:
