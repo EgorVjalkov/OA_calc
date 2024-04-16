@@ -1,7 +1,7 @@
 from typing import Optional
 from collections import defaultdict
 
-from oac.dialog.variants_with_id import topics
+from oac.dialogs.variants_with_id import topics
 from oac.program_logic.parameters import ParametersForCurrentFunc
 from oac.program_logic.blood_counter import BloodVolCounter, BleedCounter
 from oac.program_logic.drag import DragCounter

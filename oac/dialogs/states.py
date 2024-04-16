@@ -13,3 +13,7 @@ class PatientDataInput(StatesGroup):
 
 class FeedBack(StatesGroup):
     ask_menu = State()
+
+
+class Theory(StatesGroup):
+    theory = State()
