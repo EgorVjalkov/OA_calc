@@ -16,7 +16,7 @@ def get_patient(dm: DialogManager) -> Optional[Patient]:
     try:
         ctx = dm.current_context()
         return ctx.start_data['patient']
-    except NoContextError:
+    except [NoContextError, KeyError]:
         return None
 
 

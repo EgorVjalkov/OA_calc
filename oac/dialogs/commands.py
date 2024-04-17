@@ -15,15 +15,21 @@ router = Router()
 @router.message(Command('start'))
 async def start_dialog(message: Message,
                        dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(PatientDataInput.func_menu,
-                               data={'patient': Patient()},
-                               mode=StartMode.RESET_STACK)
+    await message.answer('''Привет, я - бот для расчетов в акушерской анестезиологии.
+        
+/count - выбрать функцию, рассчитать, 
+/theory - выбрать функцию, запросить справку,
+/ask - задать вопрос разработчикам''')
+
+    #await dialog_manager.start(PatientDataInput.func_menu,
+    #                           data={'patient': Patient()},
+    #                           mode=StartMode.RESET_STACK)
 
 
 @router.message(Command('ask'))
 async def ask(message: Message,
               dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(FeedBack.ask_menu)
+    await dialog_manager.start(FeedBack.ask_menu, mode=StartMode.NORMAL)
 
 
 @router.message(Command('theory'))
