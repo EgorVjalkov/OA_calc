@@ -15,8 +15,8 @@ from oac.My_token import TOKEN, ADMIN_ID
 def get_patient(dm: DialogManager) -> Optional[Patient]:
     try:
         ctx = dm.current_context()
-        return ctx.start_data['patient']
-    except [NoContextError, KeyError]:
+        return ctx.start_data.get('patient')
+    except [NoContextError]:
         return None
 
 

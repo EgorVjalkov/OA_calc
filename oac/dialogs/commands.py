@@ -3,7 +3,6 @@ from aiogram.types import Message
 from aiogram.filters import Command
 
 from aiogram_dialog import StartMode, DialogManager
-from aiogram_dialog.api.exceptions import NoContextError
 
 from oac.dialogs.states import PatientDataInput, FeedBack, Theory
 from oac.program_logic.patient import Patient
@@ -13,17 +12,20 @@ router = Router()
 
 
 @router.message(Command('start'))
-async def start_dialog(message: Message,
-                       dialog_manager: DialogManager) -> None:
+async def greet_and_commands(message: Message) -> None:
     await message.answer('''Привет, я - бот для расчетов в акушерской анестезиологии.
         
 /count - выбрать функцию, рассчитать, 
 /theory - выбрать функцию, запросить справку,
 /ask - задать вопрос разработчикам''')
 
-    #await dialog_manager.start(PatientDataInput.func_menu,
-    #                           data={'patient': Patient()},
-    #                           mode=StartMode.RESET_STACK)
+
+@router.message(Command('count'))
+async def start_count_dialog (message: Message,
+                              dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(PatientDataInput.func_menu,
+                               data={'patient': Patient()},
+                               mode=StartMode.RESET_STACK)
 
 
 @router.message(Command('ask'))
@@ -39,7 +41,7 @@ async def ask(message: Message,
     match patient:
         case None:
             await message.answer('Сначала выберите функцию')
-            await start_dialog(message, dialog_manager)
+            await greet_and_commands(message, dialog_manager)
         case Patient(func_id=None):
             await message.answer('Сначала выберите функцию')
         case Patient(func_id=f_id):

@@ -8,7 +8,7 @@ class PatientDataInput(StatesGroup):
     parameter_value_input = State()
     parameter_value_menu = State()
     print_report = State()
-    print_finish_session_report = State()
+    finish_and_print = State()
 
 
 class FeedBack(StatesGroup):
@@ -16,4 +16,5 @@ class FeedBack(StatesGroup):
 
 
 class Theory(StatesGroup):
+    func_menu = State()
     theory = State()

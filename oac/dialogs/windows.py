@@ -10,18 +10,14 @@ from oac.dialogs import getters
 from oac.dialogs.variants_with_id import sma_confirm_text
 
 
-def greet_window() -> Window:
+def func_menu_window() -> Window:
     return Window(
-        Const('''Привет, я - бот для расчетов в акушерской анестезиологии.
-        
-/count - выбрать функцию, рассчитать, 
-/theory - выбрать функцию, запросить справку,
-/ask - задать вопрос разработчикам'''),
+        Format('{topic}'),
         kbs.group_kb_by_item(selected.on_chosen_func,
                              'func', 'funcs'),
         SwitchTo(Format('{finish}'),
                  id='sw_finish',
-                 state=PatientDataInput.print_finish_session_report),
+                 state=PatientDataInput.finish_and_print),
         state=PatientDataInput.func_menu,
         getter=getters.get_funcs,
     )
@@ -87,7 +83,7 @@ def report_window() -> Window:
                  state=PatientDataInput.func_menu),
         SwitchTo(Const('задача решена!'),
                  id='sw_to_finish_report',
-                 state=PatientDataInput.print_finish_session_report),
+                 state=PatientDataInput.finish_and_print),
         state=PatientDataInput.print_report,
         getter=getters.get_report)
 
@@ -97,12 +93,12 @@ def finish_window():
         Format("{result}"),
         Cancel(Const('до встречи!'),
                on_click=selected.on_adieu),
-        state=PatientDataInput.print_finish_session_report,
+        state=PatientDataInput.finish_and_print,
         getter=getters.get_report,
     )
 
 
-patient_dialog = Dialog(greet_window(),
+patient_dialog = Dialog(func_menu_window(),
                         sma_confirm_window(),
                         select_patient_patameter_menu(),
                         change_param_value_menu(),

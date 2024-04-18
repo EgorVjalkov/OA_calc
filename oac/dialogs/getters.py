@@ -11,12 +11,16 @@ from oac.dialogs.selected import get_patient
 
 async def get_funcs(dialog_manager: DialogManager,
                     **middleware_data) -> dict:
-    data = {'funcs': funcs}
+    data = {'funcs': funcs, 'finish': 'выход'}
     patient = get_patient(dialog_manager)
-    if not patient.is_results_empty:
-        data['finish'] = 'печать результатов'
-    else:
-        data['finish'] = 'никаких задач'
+    match patient:
+        case None:
+            data['topic'] = 'По какой функции желаете получить справку?'
+        case Patient(is_results_empty=flag):
+            data['topic'] = 'Выберите функцию для расчетов'
+            if flag:
+                data['finish'] = 'печать результатов'
+
     return data
 
 
@@ -51,11 +55,11 @@ async def get_report(dialog_manager: DialogManager,
             # await dialog_manager.event.message.answer(result)
             return {'result': patient.get_reports(last=True)}
 
-        case [State(state=PatientDataInput.print_finish_session_report),
+        case [State(state=PatientDataInput.finish_and_print),
               Patient(is_results_empty=True)]:
             return {'result': 'Никаких задач, так никаких задач...'}
 
-        case [State(state=PatientDataInput.print_finish_session_report),
+        case [State(state=PatientDataInput.finish_and_print),
               Patient(is_results_empty=False)]:
             return {'result': patient.get_reports()}
 
