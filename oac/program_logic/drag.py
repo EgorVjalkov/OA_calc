@@ -1,23 +1,34 @@
 from typing import Optional
 import pandas as pd
-from dataclasses import dataclass
-from prettytable import PrettyTable
+from dataclasses import dataclass, InitVar
 
 from oac.program_logic.my_table import get_my_table_string
+from oac.program_logic.patientparameter import Limits
 
 
 @dataclass
-class Drag:
+class BaseDrag:
     drag: str
-    dose_per_kg: str
+    dose: str
+
+    def __post_init__(self):
+        self.dose: float = float(self.dose)
+        self.patient_dose: Optional[float] = None
+
+    def get_patient_dose(self, weight: int) -> float:
+        print(self)
+        self.patient_dose = float(weight) * self.dose
+        return round(self.patient_dose, 1)
+
+
+@dataclass
+class DragInjection(BaseDrag):
     unit: str
     flask_dose: str
     flask_unit: str
 
-    def __post_init__(self):
-        self.dose_per_kg: float = float(self.dose_per_kg)
-        self.flask_dose: float = float(self.flask_dose)
-        self.patient_dose: Optional[float] = None
+   # def __post_init__(self):
+   #     self.flask_dose: float = float(self.flask_dose)
 
     def __repr__(self):
         return f'Drag: {self.drag}'
@@ -29,15 +40,11 @@ class Drag:
         else:
             return dose
 
-    def get_patient_dose(self, weight: int) -> float:
-        self.patient_dose = float(weight) * self.dose_per_kg
-        return round(self.patient_dose, 1)
-
     def get_patient_dose_in_flasks(self):
         return round(self.patient_dose / self.flask_dose, 1)
 
     def count(self, weight: int) -> pd.Series:
-        dose_per_kg = f'{self.prepare_dose(self.dose_per_kg)}/кг'
+        dose_per_kg = f'{self.prepare_dose(self.dose)}/кг'
         dose_in_str = f'{self.prepare_dose(self.get_patient_dose(weight))}{self.unit}'
         flasks = f'{self.get_patient_dose_in_flasks()} {self.flask_unit}'
         answer = pd.Series({
@@ -46,14 +53,31 @@ class Drag:
 
 
 @dataclass
+class DragInfusion(BaseDrag):
+    concentration: InitVar[str]
+    d_limit: InitVar[str]
+    drag_id: str
+
+    def __post_init__(self, concentration, d_limit):
+        self.concentration: float = float(concentration)
+        limits = [float(i) for i in d_limit.split()]
+        self.d_limit: Limits = Limits(limits[0], limits[1])
+
+
+@dataclass
 class DragCounter:
     weight: int
+    func_id: str
+
+    def load_frame(self):
+        path = 'program_logic/data/drag_dosage.xlsx'
+        drag_frame = pd.read_excel(path, sheet_name=self.func_id, dtype=str)
+        return drag_frame
 
     def __call__(self, *args, **kwargs) -> str:
-        path = 'program_logic/data/drag_dosage.xlsx'
-        drag_frame = pd.read_excel(path, dtype=str)
+        drag_frame = self.load_frame()
 
-        drag_list = [Drag(*drag_frame.loc[i]).count(self.weight)
+        drag_list = [DragInjection(*drag_frame.loc[i]).count(self.weight)
                      for i in drag_frame.index]
 
         my_table = get_my_table_string(
@@ -64,6 +88,8 @@ class DragCounter:
 
 
 if __name__ == '__main__':
-    dd = DragCounter(89)
-    rep = dd()
-    print(rep)
+    #drag = BaseDrag('na', '10')
+    drag = DragInjection('na', '10', 'mg', '500', 'fl')
+    print(drag.dose)
+    print(drag.get_patient_dose(76))
+
