@@ -4,7 +4,7 @@ from collections import defaultdict
 from oac.dialogs.variants_with_id import topics
 from oac.program_logic.parameters import ParametersForCurrentFunc
 from oac.program_logic.blood_counter import BloodVolCounter, BleedCounter
-from oac.program_logic.drag import DragCounter
+from oac.program_logic.drag import PerWeightCounter
 from oac.program_logic.sma import SmaCounter
 
 
@@ -12,7 +12,7 @@ class Patient:
     def __init__(self):
         self.current_function_id: Optional[str] = None
         self.params = ParametersForCurrentFunc()
-        self.func: Optional[BloodVolCounter | DragCounter | SmaCounter] = None
+        self.func: Optional[BloodVolCounter | PerWeightCounter | SmaCounter] = None
         self.results = defaultdict(dict)
 
         self.variants_for_tg: Optional[list] = None
@@ -47,7 +47,7 @@ class Patient:
             case 'bleed_%_count':
                 self.func = BleedCounter(**values)
             case 'drag_count':
-                self.func = DragCounter(**values)
+                self.func = PerWeightCounter(**values)
             case 'sma_count':
                 self.func = SmaCounter(**values)
 
