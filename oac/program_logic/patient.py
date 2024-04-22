@@ -47,7 +47,7 @@ class Patient:
             case 'bleed_%_count':
                 self.func = BleedCounter(**values)
             case 'drag_count':
-                self.func = PerWeightCounter(**values)
+                self.func = PerWeightCounter(self.func_id, **values)
             case 'sma_count':
                 self.func = SmaCounter(**values)
 

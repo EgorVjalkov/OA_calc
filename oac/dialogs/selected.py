@@ -1,8 +1,9 @@
 from typing import Optional
 
+from aiogram import Bot
 from aiogram.types import CallbackQuery, Message
 from aiogram_dialog import DialogManager
-from aiogram_dialog.widgets.kbd import Select, Cancel, Button
+from aiogram_dialog.widgets.kbd import Select, Cancel, Button, SwitchTo
 from aiogram_dialog.widgets.input.text import TextInput
 from aiogram_dialog.api.exceptions import NoContextError
 
@@ -96,6 +97,20 @@ async def on_chosen_parameter_value(m: CallbackQuery,
     print(patient.params.current)
     set_patient(dm, patient)
     await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
+
+
+async def on_print_n_pin_result(c: CallbackQuery,
+                                w: Button,
+                                dm: DialogManager,
+                                **kwargs):
+
+    message_text = c.message.text
+    message_id = c.message.message_id
+    user_id = c.from_user.id
+    bot = Bot(TOKEN)
+    await bot.send_message(user_id, message_text)
+    await bot.pin_chat_message(user_id, message_id+1)
+    await dm.switch_to(PatientDataInput.func_menu)
 
 
 async def on_adieu(c: CallbackQuery,

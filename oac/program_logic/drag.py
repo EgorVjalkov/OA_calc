@@ -88,8 +88,8 @@ class PerWeightCounter:
     weight: int
 
     def load_frame(self):
-        path = 'data/drag_dosage.xlsx'
-        # path = 'program_logic/data/drag_dosage.xlsx'
+        # path = 'data/drag_dosage.xlsx'
+        path = 'program_logic/data/drag_dosage.xlsx'
         drag_frame = pd.read_excel(path, sheet_name=self.func_id, dtype=str)
         return drag_frame
 
