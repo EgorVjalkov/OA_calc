@@ -58,6 +58,5 @@ async def get_report(dialog_manager: DialogManager,
         case [State(state=PatientDataInput.print_finish_session_report),
               Patient(is_results_empty=False)]:
             return {'result': patient.get_reports()}
-    await bot
 
     return {'result': 'не сработало'}

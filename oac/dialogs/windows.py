@@ -76,7 +76,8 @@ def change_param_value_menu() -> Window:
 
 def report_window() -> Window:
     return Window(
-        Format('{result}'),
+        # Format('{result}'),
+        Const('результат в закрепленном сообщении'),
         SwitchTo(Const('<< изменить параметры'),
                  id='sw_to_input_menu',
                  state=PatientDataInput.patient_parameters_menu),

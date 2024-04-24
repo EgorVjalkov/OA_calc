@@ -7,10 +7,11 @@ from aiogram_dialog.widgets.kbd import Select, Cancel, Button, SwitchTo
 from aiogram_dialog.widgets.input.text import TextInput
 from aiogram_dialog.api.exceptions import NoContextError
 
+from oac.My_token import TOKEN, ADMIN_ID
 from oac.dialogs.states import PatientDataInput
 from oac.program_logic.patient import Patient
 from oac.program_logic.patientparameter import BaseParameter, LimitedParameter
-from oac.My_token import TOKEN, ADMIN_ID
+from oac.dialogs.misc_dialogs.report_message import ReportMessage
 
 
 def get_patient(dm: DialogManager) -> Optional[Patient]:
@@ -46,6 +47,8 @@ async def on_chosen_patient_parameter(c: CallbackQuery,
                                       item_id: str,
                                       **kwargs) -> None:
     if 'count' in item_id:
+        rep_msg: ReportMessage = dm.current_context().start_data.get('rep_msg')
+        await rep_msg.send_n_pin('новый репорт')
         await dm.switch_to(state=PatientDataInput.print_report)
 
     else:
