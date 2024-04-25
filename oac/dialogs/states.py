@@ -7,7 +7,7 @@ class PatientDataInput(StatesGroup):
     patient_parameters_menu = State()
     parameter_value_input = State()
     parameter_value_menu = State()
-    print_report = State()
+    report_menu = State()
     print_finish_session_report = State()
 
 

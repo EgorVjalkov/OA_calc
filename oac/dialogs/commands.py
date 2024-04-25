@@ -17,11 +17,8 @@ router = Router()
 @router.message(Command('start'))
 async def start_dialog(message: Message,
                        dialog_manager: DialogManager) -> None:
-    rep_msg = ReportMessage(message.from_user.id, message.message_id+1, Bot(TOKEN))
-    await rep_msg.send_n_pin(start_mode=True)
-
     await dialog_manager.start(PatientDataInput.func_menu,
-                               data={'patient': Patient(), 'rep_msg': rep_msg},
+                               data={'patient': Patient()},
                                mode=StartMode.RESET_STACK)
 
 

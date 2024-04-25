@@ -21,7 +21,6 @@ async def main():
     dp.include_router(feedback_dialog)
     dp.include_router(theory_dialog)
     setup_dialogs(dp)
-    print(bot)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 

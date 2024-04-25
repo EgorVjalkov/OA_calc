@@ -45,7 +45,7 @@ async def get_report(dialog_manager: DialogManager,
     patient = get_patient(dialog_manager)
 
     match ctx.state, patient:
-        case [State(state=PatientDataInput.print_report), p]:
+        case [State(state=PatientDataInput.report_menu), p]:
             p.change_func().get_result()
             # result = p.get_reports(last=True)
             # await dialog_manager.event.message.answer(result)

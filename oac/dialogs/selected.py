@@ -9,9 +9,9 @@ from aiogram_dialog.api.exceptions import NoContextError
 
 from oac.My_token import TOKEN, ADMIN_ID
 from oac.dialogs.states import PatientDataInput
+from oac.dialogs.misc_dialogs.report_message import ReportMessage
 from oac.program_logic.patient import Patient
 from oac.program_logic.patientparameter import BaseParameter, LimitedParameter
-from oac.dialogs.misc_dialogs.report_message import ReportMessage
 
 
 def get_patient(dm: DialogManager) -> Optional[Patient]:
@@ -47,9 +47,7 @@ async def on_chosen_patient_parameter(c: CallbackQuery,
                                       item_id: str,
                                       **kwargs) -> None:
     if 'count' in item_id:
-        rep_msg: ReportMessage = dm.current_context().start_data.get('rep_msg')
-        await rep_msg.send_n_pin('новый репорт')
-        await dm.switch_to(state=PatientDataInput.print_report)
+        await dm.switch_to(state=PatientDataInput.report_menu)
 
     else:
         patient = get_patient(dm)
@@ -102,22 +100,25 @@ async def on_chosen_parameter_value(m: CallbackQuery,
     await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
 
 
-async def on_print_n_pin_result(c: CallbackQuery,
-                                w: Button,
-                                dm: DialogManager,
-                                **kwargs):
-
-    message_text = c.message.text
-    message_id = c.message.message_id
-    user_id = c.from_user.id
-    bot = Bot(TOKEN)
-    await bot.send_message(user_id, message_text)
-    await bot.pin_chat_message(user_id, message_id+1)
-    await dm.switch_to(PatientDataInput.func_menu)
+async def on_send_report_msg(c: CallbackQuery,
+                             w: SwitchTo,
+                             dm: DialogManager,
+                             **kwargs):
+    patient = get_patient(dm)
+    report = patient.get_reports()
+    rep_msg: ReportMessage = dm.dialog_data.get('rep_msg')
+    if rep_msg:
+        await rep_msg.edit(report)
+    else:
+        bot = Bot(TOKEN)
+        user_id = c.from_user.id
+        msg: Message = await dm.event.message.answer(report)
+        await bot.pin_chat_message(c.from_user.id, msg.message_id)
+        dm.dialog_data.update({'rep_msg': ReportMessage(user_id, msg.message_id, bot)})
 
 
 async def on_adieu(c: CallbackQuery,
-                   w: Cancel,
+                   w: Button,
                    dm: DialogManager,
                    **kwargs):
     await dm.event.answer("До свидания!")

@@ -76,18 +76,19 @@ def change_param_value_menu() -> Window:
 
 def report_window() -> Window:
     return Window(
-        # Format('{result}'),
-        Const('результат в закрепленном сообщении'),
+        Format('{result}'),
+        # Const('результат в закрепленном сообщении'),
         SwitchTo(Const('<< изменить параметры'),
                  id='sw_to_input_menu',
                  state=PatientDataInput.patient_parameters_menu),
-        Button(Const('<< назад в меню функций'),
-               id='b_to_func_menu',
-               on_click=selected.on_print_n_pin_result),
+        SwitchTo(Const('<< назад в меню функций'),
+                 id='sw_to_func_menu',
+                 state=PatientDataInput.func_menu,
+                 on_click=selected.on_send_report_msg),
         SwitchTo(Const('задача решена!'),
                  id='sw_to_finish_report',
                  state=PatientDataInput.print_finish_session_report),
-        state=PatientDataInput.print_report,
+        state=PatientDataInput.report_menu,
         getter=getters.get_report)
 
 
