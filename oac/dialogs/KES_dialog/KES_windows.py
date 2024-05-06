@@ -27,7 +27,7 @@ def KES_menu_window() -> Window:
 def time_calculator_menu() -> Window:
     return Window(
         Const('Выберите пункт меню'),
-        kbs.group_kb_by_attr(KES_selected.on_chosen_time,
+        kbs.group_kb_by_attr(KES_selected.on_chosen_kes_parameter,
                              's_time', 'time_for_KES'),
         SwitchTo(Const('<< назад'),
                  id='sw_KES_menu',
@@ -37,19 +37,19 @@ def time_calculator_menu() -> Window:
     )
 
 
-#def input_window() -> Window:
-#    return Window(
-#        Format('{topic}'),
-#        TextInput(id='enter_data',
-#                  on_success=selected.on_entered_parameter_value),
-#        SwitchTo(Const('<< назад'),
-#                 id='sw_to_in_menu',
-#                 state=PatientDataInput.patient_parameters_menu),
-#        state=PatientDataInput.parameter_value_input,
-#        getter=getters.get_topic_for_input,
-#    )
-#
-#
+def input_window() -> Window:
+    return Window(
+        Format('{topic}'),
+        TextInput(id='enter_data',
+                  on_success=KES_selected.on_entered_parameter_value),
+        SwitchTo(Const('<< назад'),
+                 id='sw_to_in_menu',
+                 state=KES.calculator),
+        state=KES.parameter_value_input,
+        getter=KES_getters.get_topic_for_input,
+    )
+
+
 #def change_param_value_menu() -> Window:
 #    return Window(
 #        Format('{topic}'),
@@ -92,5 +92,6 @@ def time_calculator_menu() -> Window:
 
 
 KES_dialog = Dialog(KES_menu_window(),
-                    time_calculator_menu()
+                    time_calculator_menu(),
+                    input_window(),
                     )

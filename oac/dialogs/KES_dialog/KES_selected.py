@@ -27,11 +27,11 @@ def set_KES(dm: DialogManager, kes: KesCalculator) -> None:
     ctx.start_data.update({'kes': kes})
 
 
-async def on_chosen_patient_parameter(c: CallbackQuery,
-                                      w: Select,
-                                      dm: DialogManager,
-                                      item_id: str,
-                                      **kwargs) -> None:
+async def on_chosen_kes_parameter(c: CallbackQuery,
+                                  w: Select,
+                                  dm: DialogManager,
+                                  item_id: str,
+                                  **kwargs) -> None:
     if 'count' in item_id:
         await dm.switch_to(state=KES.report_menu)
 
