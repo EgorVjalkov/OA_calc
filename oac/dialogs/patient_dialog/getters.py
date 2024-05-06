@@ -5,8 +5,8 @@ from aiogram.fsm.state import State
 
 from oac.dialogs.states import PatientDataInput
 from oac.program_logic.patient import Patient
-from oac.dialogs.variants_with_id import funcs, func_theory
-from oac.dialogs.selected import get_patient
+from oac.dialogs.variants_with_id import funcs
+from oac.dialogs.patient_dialog.selected import get_patient
 
 
 async def get_funcs(dialog_manager: DialogManager,
@@ -20,8 +20,8 @@ async def get_funcs(dialog_manager: DialogManager,
     return data
 
 
-async def get_data_for_pat_params_menu(dialog_manager: DialogManager,
-                                       **middleware_date) -> dict:
+async def get_data_for_params_menu(dialog_manager: DialogManager,
+                                   **middleware_date) -> dict:
     patient = get_patient(dialog_manager)
     patient.set_current_params()
     return {'patient_parameters': patient.params.get_btns(), 'topic': patient.topic}

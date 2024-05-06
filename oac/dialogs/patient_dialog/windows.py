@@ -1,12 +1,10 @@
 from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.text import Const, Format
-from aiogram_dialog.widgets.kbd import Button, Start, Cancel, Back, SwitchTo
+from aiogram_dialog.widgets.kbd import Cancel, SwitchTo
 from aiogram_dialog.widgets.input.text import TextInput
 
 from oac.dialogs.states import PatientDataInput
-from oac.dialogs import kbs
-from oac.dialogs import selected
-from oac.dialogs import getters
+from oac.dialogs.patient_dialog import getters, kbs, selected
 from oac.dialogs.variants_with_id import sma_confirm_text
 
 
@@ -44,7 +42,7 @@ def select_patient_patameter_menu() -> Window:
                  id='sw_func_menu',
                  state=PatientDataInput.func_menu),
         state=PatientDataInput.patient_parameters_menu,
-        getter=getters.get_data_for_pat_params_menu,
+        getter=getters.get_data_for_params_menu,
     )
 
 

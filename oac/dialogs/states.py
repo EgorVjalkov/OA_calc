@@ -17,3 +17,11 @@ class FeedBack(StatesGroup):
 
 class Theory(StatesGroup):
     theory = State()
+
+
+class KES(StatesGroup):
+    menu = State()
+    calculator = State()
+    parameter_value_input = State()
+    report_menu = State()
+    reference = State()

@@ -1,7 +1,8 @@
+from typing import Iterable
 from  prettytable import PrettyTable
 
 
-def get_my_table_string(fields: list, rows: list, header: bool = True) -> str:
+def get_my_table_string(rows: list, fields: Iterable = (), header: bool = True) -> str:
     my_table = PrettyTable(field_names=fields,
                            border=False,
                            align='l',

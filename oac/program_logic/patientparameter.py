@@ -2,6 +2,7 @@ import dataclasses
 from dataclasses import dataclass, InitVar
 from typing import Optional, Dict, NamedTuple, Type
 from collections import namedtuple
+from datetime import datetime
 
 import pandas as pd
 
@@ -40,7 +41,7 @@ class BaseParameter:
     btn_text_filled: str
     fill_by_text_input: bool
     _topic: str
-    default_value: [int | str]
+    default_value: [int | str | datetime]
 
     def __post_init__(self):
         self.fill_by_text_input = bool(self.fill_by_text_input)

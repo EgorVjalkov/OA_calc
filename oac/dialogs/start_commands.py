@@ -1,25 +1,30 @@
-from aiogram import Router, Bot
+from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command
 
 from aiogram_dialog import StartMode, DialogManager
-from aiogram_dialog.api.exceptions import NoContextError
 
-from oac.My_token import TOKEN
-from oac.dialogs.states import PatientDataInput, FeedBack, Theory
+from oac.dialogs.states import PatientDataInput, FeedBack, Theory, KES
 from oac.program_logic.patient import Patient
-from oac.dialogs.selected import get_patient
-from oac.dialogs.misc_dialogs.report_message import ReportMessage
+from oac.dialogs.patient_dialog.selected import get_patient
+from oac.dialogs.KES_dialog.KES_calculator import KesCalculator
 
 router = Router()
 
 
-@router.message(Command('start'))
+@router.message(Command('new patient'))
 async def start_dialog(message: Message,
                        dialog_manager: DialogManager) -> None:
     await dialog_manager.start(PatientDataInput.func_menu,
                                data={'patient': Patient()},
                                mode=StartMode.RESET_STACK)
+
+
+@router.message(Command('kes'))
+async def kes(message: Message,
+              dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(KES.menu,
+                               data={'kes': KesCalculator()})
 
 
 @router.message(Command('ask'))
@@ -41,3 +46,4 @@ async def ask(message: Message,
         case Patient(func_id=f_id):
             await dialog_manager.start(Theory.theory,
                                        data={'func_id': f_id})
+
