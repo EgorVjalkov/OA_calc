@@ -9,11 +9,13 @@ data = '5.05.24 15:00'
 print(kes.is_usable_format(data))
 kes.current.value = data
 kes.parameter_id = 'time_out'
-kes.current.value = '4.05.24 13:50'
-print()
-print(kes.current_params)
-rep = kes.get_answer()
-print(rep)
+data2 = '4.05.24 16:50'
+kes.current.value = data2
+print(kes.is_usable_format(data))
+'нет обработки ошибки!'
+print(kes.get_time_delta())
+
+
 
 
 
