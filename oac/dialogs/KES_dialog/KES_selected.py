@@ -11,7 +11,7 @@ from oac.My_token import TOKEN, ADMIN_ID
 from oac.dialogs.states import KES
 from oac.dialogs.misc_dialogs.report_message import ReportMessage
 from oac.program_logic.patientparameter import BaseParameter, LimitedParameter
-from oac.dialogs.KES_dialog.KES_calculator import KesCalculator
+from oac.dialogs.KES_dialog.KES_calculator import KesCalculator, TimeInError, TimeOutError
 
 
 def get_KES(dm: DialogManager) -> Optional[KesCalculator]:
@@ -48,11 +48,21 @@ async def on_entered_parameter_value(m: Message,
                                      input_data: str,
                                      **kwargs):
     kes: KesCalculator = get_KES(dm)
-    if not kes.is_usable_format(input_data):
-        await m.answer("Недопустимое значение")
+    try:
+        kes.set_value(input_data)
+
+    except ValueError:
+        await m.answer('Недопустимое значение')
         return
 
-    kes.current.value = input_data
+    except TimeInError:
+        await m.answer(TimeInError.message)
+        return
+
+    except TimeOutError:
+        await m.answer(TimeOutError.message)
+        return
+
     set_KES(dm, kes)
     await dm.switch_to(KES.calculator)
 
