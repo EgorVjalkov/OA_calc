@@ -15,9 +15,9 @@ def KES_menu_window() -> Window:
         SwitchTo(Const('расчет времени пребывания'),
                  id='sw_time',
                  state=KES.calculator),
-        SwitchTo(Const('справка по КЭСам'),
-                 id='sw_ref',
-                 state=KES.reference),
+        # SwitchTo(Const('справка по КЭСам'),
+        #          id='sw_ref',
+        #          state=KES.reference),
         Cancel(Const('спасибо, не надо'),
                on_click=on_adieu),
         state=KES.menu
