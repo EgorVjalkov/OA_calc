@@ -10,9 +10,7 @@ from oac.dialogs.variants_with_id import sma_confirm_text
 
 def greet_window() -> Window:
     return Window(
-        Const('''Привет, я - бот для расчетов в акушерской анестезиологии. 
-        /theory - запросить справку по функции.
-        /ask - задать вопрос разработчикам'''),
+        Const('Выберите функцию для расчетов'),
         kbs.group_kb_by_item(selected.on_chosen_func,
                              'func', 'funcs'),
         SwitchTo(Format('{finish}'),
@@ -81,8 +79,8 @@ def report_window() -> Window:
                  state=PatientDataInput.patient_parameters_menu),
         SwitchTo(Const('<< назад в меню функций'),
                  id='sw_to_func_menu',
-                 state=PatientDataInput.func_menu,
-                 on_click=selected.on_send_report_msg),
+                 state=PatientDataInput.func_menu),
+                 # on_click=selected.on_send_report_msg), # закреп себя не оправдал. быть может нужно через другого бота...
         SwitchTo(Const('задача решена!'),
                  id='sw_to_finish_report',
                  state=PatientDataInput.print_finish_session_report),

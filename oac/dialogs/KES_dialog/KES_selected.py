@@ -67,36 +67,6 @@ async def on_entered_parameter_value(m: Message,
     await dm.switch_to(KES.calculator)
 
 
-async def on_chosen_parameter_value(m: CallbackQuery,
-                                    w: Select,
-                                    dm: DialogManager,
-                                    item_id: str,
-                                    **kwargs):
-    patient = get_patient(dm)
-    patient.params.current.value = item_id
-    print(patient.params.current.value, patient.params.current.button_text)
-    print(patient.params.current)
-    set_patient(dm, patient)
-    await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
-
-
-async def on_send_report_msg(c: CallbackQuery,
-                             w: SwitchTo,
-                             dm: DialogManager,
-                             **kwargs):
-    patient = get_patient(dm)
-    report = patient.get_reports()
-    rep_msg: ReportMessage = dm.dialog_data.get('rep_msg')
-    if rep_msg:
-        await rep_msg.edit(report)
-    else:
-        bot = Bot(TOKEN)
-        user_id = c.from_user.id
-        msg: Message = await dm.event.message.answer(report)
-        await bot.pin_chat_message(c.from_user.id, msg.message_id)
-        dm.dialog_data.update({'rep_msg': ReportMessage(user_id, msg.message_id, bot)})
-
-
 async def on_adieu(c: CallbackQuery,
                    w: Button,
                    dm: DialogManager,

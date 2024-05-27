@@ -70,6 +70,24 @@ class BaseParameter:
 
 
 @dataclass
+class DateTimeParameter(BaseParameter):
+
+    def __post_init__(self):
+        self._datetime: Optional[datetime] = None
+
+    def __repr__(self):
+        return f'DateTimeParameter({self.id}={self.default_value})'
+
+    @property
+    def value_like_datetime(self) -> datetime:
+        return self._datetime
+
+    @value_like_datetime.setter
+    def value_like_datetime(self, value: datetime) -> None:
+        self._datetime = value
+
+
+@dataclass
 class LimitedParameter(BaseParameter):
     limits: str
 
@@ -136,6 +154,9 @@ def load_parameters() -> dict:
             case {'fill_by_text_input': 1}:
                 parameter = init_example_by_fields(LimitedParameter, row_dict)
 
+            case {'fill_by_text_input': 'datetime'}:
+                parameter = init_example_by_fields(DateTimeParameter, row_dict)
+
             case {'fill_by_text_input': 0}:
                 variants = comp_param_btns_df[comp_param_btns_df.parameter_id == row_dict['id']]
                 variants = [init_example_by_fields(CompParamMenuBtn, variants.loc[i].to_dict())
@@ -143,7 +164,7 @@ def load_parameters() -> dict:
                 #variants = [CompParamMenuBtn(**variants.loc[i].to_dict()) for i in variants.index]
                 row_dict.update({'variants': {i.id: i for i in variants}})
                 parameter = init_example_by_fields(SelectedParameter, row_dict)
-            case l:
+            case _:
                 print('error')
         print(parameter)
         params_dict[parameter.id] = parameter

@@ -10,7 +10,7 @@ from oac.dialogs.KES_dialog.KES_selected import get_KES
 
 
 async def get_data_for_kes_calculator(dialog_manager: DialogManager,
-                           **middleware_date) -> dict:
+                                      **middleware_date) -> dict:
     kes = get_KES(dialog_manager)
     return {'time_for_KES': kes.get_btns()}
 
@@ -19,3 +19,10 @@ async def get_topic_for_input(dialog_manager: DialogManager,
                               **middleware_date) -> Optional[dict]:
     kes = get_KES(dialog_manager)
     return {'topic': kes.current.topic}
+
+
+async def get_report(dialog_manager: DialogManager,
+                     **middleware_date) -> Optional[dict]:
+    kes = get_KES(dialog_manager)
+    return {'result': kes.get_answer()}
+

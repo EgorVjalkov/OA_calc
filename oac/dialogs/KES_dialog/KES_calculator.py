@@ -1,25 +1,11 @@
 from typing import Optional
 from datetime import datetime, timedelta
 from dataclasses import dataclass
-from collections import namedtuple
 
 from oac.program_logic.parameters import ParametersForCurrentFunc
+from oac.program_logic.patientparameter import DateTimeParameter
 from oac.program_logic.my_table import get_my_table_string
-
-
-MyTimeDelta = namedtuple('MyTimeDelta', 'hours minutes')
-
-
-class TimeError(Exception):
-    message = ''
-
-
-class TimeOutError(TimeError):
-    message = 'время выбытия должно быть больше, чем время приема'
-
-
-class TimeInError(Exception):
-    message = 'время приема должно быть меньше, чем время приема'
+from oac.dialogs.KES_dialog.KES_utils import MyTimeDelta, TimeInError, TimeOutError
 
 
 @dataclass
@@ -45,60 +31,33 @@ class KesCalculator(ParametersForCurrentFunc):
 
     def set_value(self, text_input: str):
         date_time = self.convert(text_input)
-        # не перезаписывает. а такеж проблемка с конверсией при выводе ответа
-        match self.current, self.get_values():
-            case {'time_in': 0, 'time_out': 0}:
-                self.current.value = date_time
-
-            case {'time_in': t_in, 'time_out': 0} if isinstance(t_in, datetime):
-                if date_time > t_in:
-                    self.current.value = date_time
-                else:
+        match self.current.id, self.current_params:
+            case 'time_out', {'time_in': t_in} if t_in.value:
+                if date_time <= t_in.value_like_datetime:
                     raise TimeOutError(TimeOutError.message)
 
-            case {'time_in': 0, 'time_out': t_out} if isinstance(t_out, datetime):
-                if date_time < t_out:
-                    self.current.value = date_time
-                else:
+            case 'time_in', {'time_out': t_out} if t_out.value:
+                if date_time >= t_out.value_like_datetime:
                     raise TimeInError(TimeInError.message)
-            case _:
-                print('не работает')
 
-
-    def get_time_delta(self, text_input):
-        data = self.get_values()
-        time_in = data['time_in']
-        time_out = data['time_out']
-        delta: timedelta = self.convert(time_out) - self.convert(time_in)
-        if delta.days < 0:
-            raise ValueError('delta must be >= 0')
-        return delta
-
-    def convert_to_my_time_delta(self) -> MyTimeDelta:
-        match self.delta.days, self.delta.seconds:
-            case d, s if not d:
-                 hours = s // 3600
-                 minutes = int(s % 3600 / 60)
-
-            case d, s if d:
-                hours = (d*24) + (s // 3600)
-                minutes = int(s % 3600 / 60)
-
-        return MyTimeDelta(str(hours), str(minutes))
+        self.current.value = text_input
+        self.current.value_like_datetime = date_time
 
     def get_answer(self):
-        delta_in_str = self.convert_to_my_time_delta()
+        time_in: DateTimeParameter = self.current_params['time_in']
+        time_out: DateTimeParameter = self.current_params['time_out']
+
+        delta: timedelta = time_out.value_like_datetime - time_in.value_like_datetime
+        delta_in_str = MyTimeDelta(delta)
+        delta_in_str.normalize()
+
         hours = f'{delta_in_str.hours} ч.'
         minutes = f'{delta_in_str.minutes} мин.'
-
         in_unit = f'{hours} {minutes}'
 
-        data = self.get_values()
-        time_in = data['time_in']
-        time_out = data['time_out']
         answer = [
-            ['время поступления:', f'{time_in}'],
-            ['время перевода:', f'{time_out}'],
+            ['время поступления:', f'{time_in.value}'],
+            ['время перевода:', f'{time_out.value}'],
             ['всего в отделении:', f'{in_unit}'],
             ['КЭС:', f'{self.get_kes(int(delta_in_str.hours))}']
         ]

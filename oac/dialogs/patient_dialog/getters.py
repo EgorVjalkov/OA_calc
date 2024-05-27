@@ -3,7 +3,7 @@ from typing import Optional
 from aiogram_dialog import DialogManager
 from aiogram.fsm.state import State
 
-from oac.dialogs.states import PatientDataInput
+from oac.dialogs.states import PatientDataInput, Theory
 from oac.program_logic.patient import Patient
 from oac.dialogs.variants_with_id import funcs
 from oac.dialogs.patient_dialog.selected import get_patient
@@ -11,6 +11,7 @@ from oac.dialogs.patient_dialog.selected import get_patient
 
 async def get_funcs(dialog_manager: DialogManager,
                     **middleware_data) -> dict:
+
     data = {'funcs': funcs}
     patient = get_patient(dialog_manager)
     if not patient.is_results_empty:

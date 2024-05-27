@@ -50,18 +50,21 @@ def input_window() -> Window:
     )
 
 
-#def change_param_value_menu() -> Window:
-#    return Window(
-#        Format('{topic}'),
-#        kbs.group_kb_by_attr(selected.on_chosen_parameter_value,
-#                             id_='ch_param', select_items='param_values'),
-#        SwitchTo(Const('<< назад'),
-#                 id='sw_to_in_menu',
-#                 state=PatientDataInput.patient_parameters_menu),
-#        state=PatientDataInput.parameter_value_menu,
-#        getter=getters.get_kb_for_select_parameter,
-#    )
-#
+def report_window() -> Window:
+    return Window(
+        Format('{result}'),
+        # Const('результат в закрепленном сообщении'),
+        SwitchTo(Const('<< изменить параметры'),
+                 id='sw_to_input_menu',
+                 state=KES.calculator),
+        SwitchTo(Const('<< назад в меню функций'),
+                 id='sw_to_func_menu',
+                 state=KES.menu),
+        Cancel(Const('задача решена!'),
+               on_click=KES_selected.on_adieu),
+        state=KES.report_menu,
+        getter=KES_getters.get_report)
+
 #
 #def report_window() -> Window:
 #    return Window(
@@ -94,4 +97,5 @@ def input_window() -> Window:
 KES_dialog = Dialog(KES_menu_window(),
                     time_calculator_menu(),
                     input_window(),
+                    report_window()
                     )
