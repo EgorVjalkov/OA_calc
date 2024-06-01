@@ -15,11 +15,8 @@ class Limits:
     min: int | float
     max: int | float
 
-    def __contains__(self, item: int):
-        if self.min <= item <= self.max:
-            return True
-        else:
-            return False
+    def __contains__(self, item: int | float):
+        return self.min <= item <= self.max
 
 
 @dataclass
@@ -92,7 +89,13 @@ class LimitedParameter(BaseParameter):
     limits: str
 
     def __post_init__(self):
-        l_list = [int(i) for i in self.limits.split()]
+        match self.limits:
+            case limit_str if '.' in limit_str:
+                l_list = [float(i) for i in limit_str.split(' ')]
+
+            case limit_str:
+                l_list = [int(i) for i in limit_str.split()]
+
         self.limits: Limits = Limits(*l_list)
 
     def __repr__(self):

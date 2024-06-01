@@ -1,6 +1,6 @@
 from oac.program_logic import data
-from oac.program_logic.data import risk_factor_dict
-from oac.program_logic.RiskFactor import RiskFactor
+from oac.patients.data import risk_factor_dict
+from oac.patients.RiskFactor import RiskFactor
 from datetime import datetime
 
 

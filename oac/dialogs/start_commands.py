@@ -26,7 +26,7 @@ async def new_patient(message: Message,
                       dialog_manager: DialogManager) -> None:
     await dialog_manager.start(PatientDataInput.func_menu,
                                data={'patient': Patient()},
-                               # mode=StartMode.RESET_STACK,
+                               mode=StartMode.RESET_STACK,
                                )
 
 

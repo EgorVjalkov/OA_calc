@@ -6,6 +6,7 @@ from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.kbd import Select, Cancel, Button, SwitchTo
 from aiogram_dialog.widgets.input.text import TextInput
 from aiogram_dialog.api.exceptions import NoContextError
+from fastnumbers import isreal, fast_real
 
 from oac.My_token import TOKEN, ADMIN_ID
 from oac.dialogs.states import PatientDataInput
@@ -67,24 +68,26 @@ async def on_entered_parameter_value(m: Message,
                                      **kwargs):
 
     # наверно можно упростить и дописать занчения
-    patient = get_patient(dm)
-    if not input_data.isdigit():
-        await m.answer("Недопустимое значение")
+    value = input_data.replace(',', '.')
+
+    if not isreal(value):
         return
 
-    match patient.params.current, int(input_data):
-        case LimitedParameter(), value if value in patient.params.current.limits:
-            patient.params.current.value = value
-            set_patient(dm, patient)
-            await dm.switch_to(PatientDataInput.patient_parameters_menu)
+    patient = get_patient(dm)
+    value = fast_real(value)
 
-        case BaseParameter(), value if value > 0:
-            patient.params.current.value = value
-            set_patient(dm, patient)
-            await dm.switch_to(PatientDataInput.patient_parameters_menu)
+    match patient.params.current:
+        case LimitedParameter():
+            if value in patient.params.current.limits:
+                patient.params.current.value = value
+                set_patient(dm, patient)
+                await dm.switch_to(PatientDataInput.patient_parameters_menu)
 
-        case _, _:
-            await m.answer('Недопустимое значение.')
+        case BaseParameter():
+            if value > 0:
+                patient.params.current.value = value
+                set_patient(dm, patient)
+                await dm.switch_to(PatientDataInput.patient_parameters_menu)
 
 
 async def on_chosen_parameter_value(m: CallbackQuery,
