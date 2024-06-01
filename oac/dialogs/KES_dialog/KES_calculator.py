@@ -23,11 +23,11 @@ class KesCalculator(ParametersForCurrentFunc):
     @staticmethod
     def get_kes(hours) -> str:
         match hours:
-            case h if h < 25:
-                return 'нК4310.10'
+            case h if h < 24:
+                return '4310.10'
             case h if h < 72:
-                return 'нК4310.20'
-        return 'нК4310.30'
+                return '4310.20'
+        return '4310.30'
 
     def set_value(self, text_input: str):
         date_time = self.convert(text_input)
