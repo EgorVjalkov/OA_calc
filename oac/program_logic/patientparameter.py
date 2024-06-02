@@ -13,9 +13,21 @@ Btn = namedtuple('Btn', 'text id')
 @dataclass
 class Limits:
     min: int | float
-    max: int | float
+    max: Optional[int | float | str] = None
+
+    @property
+    def is_ray_limit(self) -> bool:
+        return self.max == 'inf'
+
+    @property
+    def is_point_limit(self) -> bool:
+        return self.max is None
 
     def __contains__(self, item: int | float):
+        if self.is_ray_limit:
+            return self.min <= item
+        if self.is_point_limit:
+            return self.min == item
         return self.min <= item <= self.max
 
 

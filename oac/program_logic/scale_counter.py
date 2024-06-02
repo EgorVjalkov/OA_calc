@@ -1,5 +1,8 @@
 import pandas as pd
 from dataclasses import dataclass, fields
+from fastnumbers import fast_real
+
+from oac.program_logic.patientparameter import Limits
 
 
 @dataclass
@@ -21,13 +24,14 @@ class SofaCounter:
         self.oxygenation_index = int(self.pao2 / self.fio2)
 
     def get_oxygenation_count(self) -> int:
-        oxy_count = 'не получилося'
-        oxy_ser = self.data.loc['oxygenation']
+        oxy_ser = self.data.loc[self.resp_support]
+        oxy_ser = oxy_ser[oxy_ser.map(pd.notna) == True]
+
         for i in oxy_ser.index:
-            oxy_index_comparison, resp_support = oxy_ser[i].split(', ')
-            compar_in_str = f'{self.oxygenation_index} {oxy_index_comparison}'
-            if eval(compar_in_str):
-                if self.resp_support == resp_support:
-                    oxy_count = oxy_ser[i]
-                    print(oxy_ser[i], i)
-        return oxy_count
+            cell_data = oxy_ser[i]
+            limits = Limits(
+                *[fast_real(e) for e in cell_data.split()])
+            if self.oxygenation_index in limits:
+                return i
+
+
