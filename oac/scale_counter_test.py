@@ -14,6 +14,5 @@ sofa = SofaCounter(
     1000,
 )
 
-ox = sofa.get_oxygenation_count()
-print(sofa.oxygenation_index)
-print(ox)
+ox = sofa.get_oxygenation_score()
+sofa.get_scores()
