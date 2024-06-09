@@ -10,9 +10,9 @@ sofa = SofaCounter(
     35,
     2,
     14,
-    210,
+    100,
     1000,
 )
 
-ox = sofa.get_oxygenation_score()
-sofa.get_scores()
+rep = sofa()
+print(rep)

@@ -36,7 +36,7 @@ class CompParamMenuBtn:
     id: str
     btn: str
     text_if_filled: str
-    sma_risk_factor_count: int
+    count: int | str
 
     def make_button(self):
         return Btn(self.btn, self.id)
@@ -127,7 +127,7 @@ class SelectedParameter(BaseParameter):
 
     @property
     def count(self):
-        return self.variants[self.value].sma_risk_factor_count
+        return self.variants[self.value].count
 
     @property
     def button_text(self):

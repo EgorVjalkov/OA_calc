@@ -6,6 +6,7 @@ from oac.program_logic.parameters import ParametersForCurrentFunc
 from oac.program_logic.blood_counter import BloodVolCounter, BleedCounter
 from oac.program_logic.drag import PerWeightCounter
 from oac.program_logic.sma import SmaCounter
+from oac.program_logic.scale_counter import SofaCounter
 
 
 class Patient:
@@ -50,6 +51,9 @@ class Patient:
                 self.func = PerWeightCounter(self.func_id, **values)
             case 'sma_count':
                 self.func = SmaCounter(**values)
+            case 'sofa_count':
+                print(values)
+                self.func = SofaCounter(**values)
 
         return self
 
