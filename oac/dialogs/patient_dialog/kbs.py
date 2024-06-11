@@ -3,7 +3,7 @@ import operator
 from aiogram_dialog.widgets.kbd import ScrollingGroup, Select, Group
 from aiogram_dialog.widgets.text import Format
 
-SCROLLING_HEIGHT = 1
+SCROLLING_HEIGHT = 3
 
 
 def group_kb_by_attr(on_click, id_: str, select_items: str, ):
@@ -18,7 +18,24 @@ def group_kb_by_attr(on_click, id_: str, select_items: str, ):
             on_click=on_click
         ),
         id=group_id,
-        width=1
+        width=1,
+    )
+
+
+def scroll_group_kb_by_attr(on_click, id_: str, select_items: str, ):
+    group_id = f'g_{id_}'
+    select_id = f's_{id_}'
+    return ScrollingGroup(
+        Select(
+            Format('{item.text}'), #
+            id=select_id,
+            item_id_getter=operator.attrgetter('id'),
+            items=select_items,
+            on_click=on_click
+        ),
+        id=group_id,
+        width=1,
+        height=SCROLLING_HEIGHT
     )
 
 

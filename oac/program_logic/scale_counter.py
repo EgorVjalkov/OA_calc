@@ -97,7 +97,8 @@ class SofaCounter:
 
     def __call__(self, *args, **kwargs):
         scores = self.get_scores()
-        rows = [[translation_dict[i], scores[i]] for i in scores]
+        rows = ['индекс оксигенации', self.oxygenation_index]
+        rows.extend([[translation_dict[i], scores[i]] for i in scores])
         rows.append(['сумма', self.total_score])
         rows.append(['летальность', self.get_lethality()])
 

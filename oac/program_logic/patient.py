@@ -79,7 +79,7 @@ class Patient:
             answer.append("Для пациента с параметрами:")
             params = self.results[result]['parameters']
             answer.extend(list(params.values()))
-            answer.append('получены результаты:')
+            answer.extend(['', 'получены результаты:'])
             result = self.results[result]['result']
             answer.append(result)
             answer.append('')

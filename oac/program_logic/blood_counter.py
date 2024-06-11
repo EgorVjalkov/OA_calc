@@ -34,8 +34,8 @@ class BloodVolCounter:
         crit_ = '-'.join(self.count_bleed_volume((25, 30)))
         rows = [
             ['Oбъем ОЦК', f'~ {self.blood_volume}мл'],
-            ['шок I', f'~ {clin_}мл'],
-            ['шок II-III', f'~ {crit_}мл'],
+            ['потеря 10-15%', f'~ {clin_}мл'],
+            ['потеря 25-30%', f'~ {crit_}мл'],
         ]
         return get_my_table_string(fields=[], rows=rows, header=False)
 
