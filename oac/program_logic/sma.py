@@ -48,7 +48,7 @@ class SmaCounter:
 
         return sum_of_factors
 
-    def get_bupivacaine_dose(self, sum_of_risk) -> float:
+    def get_anesthetic_dose(self, sum_of_risk) -> float:
         match self.height:
             case h if h < 145:
                 h = 145
@@ -63,13 +63,13 @@ class SmaCounter:
         return bupivacaine_dosage[h][sum_of_risk+2]
 
     def __call__(self, *args, **kwargs) -> str:
-        dose_for_lying = self.get_bupivacaine_dose(self.count_a_sum())
-        dose_for_sitting = round(dose_for_lying+0.4, 1)
-        # first = ['Доза при пункции в положении:', '']
+        dose_for_lying = self.get_anesthetic_dose(self.count_a_sum())
+        hyperbaric = round(dose_for_lying+0.4, 1)
+        isobaric = round(dose_for_lying+1.2, 1)
         rows = [
-            ['Доза при пункции в положении:', ''],
-            ['лежа', f'{dose_for_lying}мл'],
-            ['cидя', f'{dose_for_sitting}мл'],
+            ['тип анестетика', 'доза в мл'],
+            ['гипербарический', f'{hyperbaric}мл'],
+            ['изобарический', f'{isobaric}мл'],
         ]
         return get_my_table_string(fields=[], rows=rows, header=False)
 
