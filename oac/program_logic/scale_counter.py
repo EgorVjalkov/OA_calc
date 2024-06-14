@@ -1,5 +1,6 @@
 import pandas as pd
 from dataclasses import dataclass, fields, InitVar
+from typing import Optional
 from fastnumbers import fast_real
 
 from oac.program_logic.patientparameter import Limits
@@ -17,29 +18,17 @@ translation_dict = {
 
 
 @dataclass
-class SofaCounter:
-    fio2: InitVar[float | int]
-    pao2: InitVar[int]
-    resp_support_count: InitVar[str]
-    plt: int
-    bili: int
-    hypotension_count: int
-    glasgow: int
-    crea: InitVar[int]
-    diuresis: InitVar[int]
+class BaseScale:
+    pass
 
-    def __post_init__(self, fio2, pao2, resp_support_count, crea, diuresis):
-        self.respiration: str = resp_support_count
-        self.oxygenation_index = int(pao2/fio2)
-        self.crea: int = crea
-        self.diuresis: int = diuresis
+    def __post_init__(self):
+        self.data: Optional[pd.DataFrame] = None
+        self.lethality_frame: Optional[pd.DataFrame] = None
 
+    def get_scale_frame(self, scale_name: str):
         path = 'program_logic/data/scales.xlsx'
-        sheet = 'sofa_count'
-        self.data = pd.read_excel(path, sheet_name=sheet, index_col=0, dtype=str)
-        self.lethality_frame = pd.read_excel(path, sheet_name='sofa_lethal', index_col=0)
-
-        self.total_score: int = 0
+        self.data = pd.read_excel(path, sheet_name=scale_name+'_count', index_col=0, dtype=str)
+        self.lethality_frame = pd.read_excel(path, sheet_name=scale_name+'_lethal', index_col=0)
 
     def get_score_scale(self, indicator_name: str) -> pd.Series:
         if indicator_name == 'total_score':
@@ -58,6 +47,41 @@ class SofaCounter:
                 *[fast_real(e) for e in cell_data.split()])
             if self.__dict__[indicator_name] in limits:
                 return score
+
+    def get_simple_scores(self):
+        field_names = [i.name for i in fields(self)]
+        scores = {}
+        for indicator_name in field_names:
+            scores[indicator_name] = self.get_score(indicator_name)
+
+        return scores
+
+    def get_lethality(self):
+        return self.get_score('total_score')
+
+
+@dataclass
+class SofaCounter(BaseScale):
+    fio2: InitVar[float | int]
+    pao2: InitVar[int]
+    resp_support_count: InitVar[str]
+    plt: int
+    bili: int
+    hypotension_count: int
+    glasgow: int
+    crea: InitVar[int]
+    diuresis: InitVar[int]
+
+    def __post_init__(self, fio2, pao2, resp_support_count, crea, diuresis):
+        super().__post_init__()
+        self.get_scale_frame('sofa')
+
+        self.respiration: str = resp_support_count
+        self.oxygenation_index = int(pao2/fio2)
+        self.crea: int = crea
+        self.diuresis: int = diuresis
+
+        self.total_score: int = 0
 
     def get_oxygenation_score(self) -> int:
         oxy_ser = self.get_score_scale(self.respiration)
@@ -80,24 +104,18 @@ class SofaCounter:
             case int(d) if d < crea_score:
                 return crea_score
 
-    def get_scores(self):
-        field_names = [i.name for i in fields(self)]
+    def get_sofa_scores(self):
         scores = {'oxygenation': self.get_oxygenation_score()}
-
-        for indicator_name in field_names:
-            scores[indicator_name] = self.get_score(indicator_name)
-
+        scores.update(self.get_simple_scores())
         scores['excretion'] = self.get_excretion_count()
+
         self.total_score = sum(scores.values())
 
         return scores
 
-    def get_lethality(self):
-        return self.get_score('total_score')
-
     def __call__(self, *args, **kwargs):
-        scores = self.get_scores()
-        rows = ['индекс оксигенации', self.oxygenation_index]
+        scores = self.get_sofa_scores()
+        rows = [['индекс оксигенации', self.oxygenation_index]]
         rows.extend([[translation_dict[i], scores[i]] for i in scores])
         rows.append(['сумма', self.total_score])
         rows.append(['летальность', self.get_lethality()])
@@ -105,3 +123,33 @@ class SofaCounter:
         my_table = get_my_table_string(header=False, rows=rows)
         return my_table
 
+
+@dataclass
+class ApacheIICounter(BaseScale):
+    body_temp: float
+    MAP: int
+    HBR: int
+    breath_rate: int
+
+    pH: float
+
+    fio2: InitVar[float | int]
+    pao2: InitVar[int]
+    resp_support_count: InitVar[str]
+    plt: int
+    bili: int
+    hypotension_count: int
+    glasgow: int
+    crea: InitVar[int]
+    diuresis: InitVar[int]
+
+    def __post_init__(self, fio2, pao2, resp_support_count, crea, diuresis):
+        super().__post_init__()
+        self.get_scale_frame('sofa')
+
+        self.respiration: str = resp_support_count
+        self.oxygenation_index = int(pao2/fio2)
+        self.crea: int = crea
+        self.diuresis: int = diuresis
+
+        self.total_score: int = 0

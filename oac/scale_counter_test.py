@@ -1,6 +1,11 @@
-from oac.program_logic.scale_counter import SofaCounter
+from oac.program_logic.scale_counter import SofaCounter, BaseScale
 from oac.program_logic.patientparameter import Limits
 
+scale = BaseScale()
+print(scale)
+scale.get_scale_frame('sofa')
+print(scale.data)
+print(scale.lethality_frame)
 
 sofa = SofaCounter(
     0.21,
