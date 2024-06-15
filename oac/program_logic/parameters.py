@@ -1,8 +1,12 @@
 from dataclasses import dataclass
 from typing import Optional, Dict
+from collections import namedtuple
 
 from oac.program_logic.patientparameter import (load_parameters, Btn,
                                                 LimitedParameter, SelectedParameter, BaseParameter)
+
+
+ShortParam = namedtuple('ShortParam', 'name value')
 
 
 @dataclass
@@ -11,7 +15,7 @@ class ParametersForCurrentFunc:
     current_parameter_id: Optional[str] = None
 
     def __post_init__(self):
-        self.data: Dict[str, LimitedParameter] = load_parameters()
+        self.data: Dict[str, BaseParameter] = load_parameters()
         print(self.data.values())
 
     def set_current_params(self, func_id) -> dict:
@@ -23,10 +27,10 @@ class ParametersForCurrentFunc:
         values = {}
         for i in self.current_params:
             match self.current_params[i]:
-                case SelectedParameter():
-                    values[f'{i}_count'] = self.current_params[i].count
-                case BaseParameter():
-                    values[i] = self.current_params[i].value
+                case param if isinstance(param, SelectedParameter):
+                    values[f'{i}_count'] = ShortParam(param.btn_text, param.count)
+                case param if isinstance(param, BaseParameter):
+                    values[i] = ShortParam(param.btn_text, param.value)
         print(values)
         return values
 

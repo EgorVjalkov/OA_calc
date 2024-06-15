@@ -6,7 +6,8 @@ from oac.program_logic.parameters import ParametersForCurrentFunc
 from oac.program_logic.blood_counter import BloodVolCounter, BleedCounter
 from oac.program_logic.drag import PerWeightCounter
 from oac.program_logic.sma import SmaCounter
-from oac.program_logic.scale_counter import SofaCounter
+from oac.program_logic.sofa_counter import SofaCounter
+from oac.program_logic.apacheII_counter import ApacheIICounterFio2Less50
 
 
 class Patient:
@@ -52,8 +53,10 @@ class Patient:
             case 'sma_count':
                 self.func = SmaCounter(**values)
             case 'sofa_count':
-                print(values)
                 self.func = SofaCounter(**values)
+            case 'apacheII_count':
+                print(self.params.current_params)
+                self.func = ApacheIICounterFio2Less50(**self.params.current_params)
 
         return self
 

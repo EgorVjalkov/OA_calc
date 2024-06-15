@@ -1,7 +1,7 @@
 from oac.program_logic.patient import Patient
 from dataclasses import dataclass, fields
 from collections import namedtuple
-from oac.program_logic.scale_counter import SofaCounter
+from oac.program_logic.apacheII_counter import ApacheIICounterFio2Less50
 test_params = (
     0.21,
     40,
@@ -14,9 +14,27 @@ test_params = (
     1000,
 )
 
+apache_test = (
+    56,
+    13,
+    40,
+    56,
+    40.2,
+    62,
+    130,
+    25,
+    7.02,
+    135,
+    4.5,
+    0.45,
+    22,
+    'CHP',
+    'emerg_oper'
+)
+
 
 def gen():
-    for i in test_params:
+    for i in apache_test:
         yield i
 
 
@@ -25,17 +43,15 @@ gen = gen()
 
 if __name__ == '__main__':
     patient = Patient()
-    patient.func_id = 'sofa_count'
+    patient.func_id = 'apacheIIFio2less50_count'
     patient.set_current_params()
     for i in patient.params.current_params:
         patient.params.parameter_id = i
         patient.params.current.value = next(gen)
 
-    print(patient.params.get_btns())
-
-    sofa = SofaCounter(**patient.params.get_values())
-    rep = sofa()
-    print(rep)
+    apache = ApacheIICounterFio2Less50(**patient.params.get_values())
+    rep = apache()
+    #print(rep)
 
 #    patient.params.parameter_id = 'weight'
 #    patient.params.current.value = 61
