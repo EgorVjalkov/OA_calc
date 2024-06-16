@@ -1,10 +1,11 @@
 from dataclasses import dataclass, InitVar
 from fastnumbers import fast_int
+from typing import Dict
 
 from oac.program_logic import AaDO2_counter
-from oac.program_logic.scale_counter import BaseScale, translation_dict
-from oac.program_logic.my_table import get_my_table_string
+from oac.program_logic.scale_counter import BaseScale, ScaleParam
 from oac.program_logic.parameters import ShortParam
+from oac.program_logic.my_table import get_my_table_string
 
 
 @dataclass
@@ -35,28 +36,36 @@ class ApacheIICounterFio2Less50(BaseScale):
         self.operation_param = operation_var
 
     def get_CHP_score(self) -> int:
-        match self.chronic_param.count, self.operation_param.count:
+        print(self.chronic_param, self.operation_param)
+        match self.chronic_param.value, self.operation_param.value:
             case 'chronic', 'elect':
                 return 2
             case 'chronic', 'emerg' | 'no_oper':
                 return 5
         return 0
 
-    def get_apacheII_scores(self):
-        scores = self.get_simple_scores()
-        scores['glasgow'] = self.glasgow_param.value
-        scores['CHP'] = self.get_CHP_score()
-        scores = {i: fast_int(scores[i]) for i in scores}
+    def get_CHP_param(self) -> ScaleParam:
+        name = 'CHP'
+        value = f'{self.chronic_param.value}+{self.operation_param.value}'
+        score = self.get_CHP_score()
+        return ScaleParam(name, value, score)
 
-        self.total_score = sum(scores.values())
+    def get_apacheII_scores(self) -> Dict[str, ScaleParam]:
+        scores = self.get_simple_scores()
+        scores['glasgow'] = ScaleParam(self.glasgow_param.name,
+                                       self.glasgow_param.value,
+                                       f'+{self.glasgow_param.value}')
+        scores['CHP'] = self.get_CHP_param()
 
         return scores
 
     def __call__(self, *args, **kwargs):
         scores = self.get_apacheII_scores()
-        rows = [, scores[i]] for i in scores]
-        rows.append(['сумма', self.total_score])
-        rows.append(['летальность', self.get_lethality()])
+        self.get_total_score(scores)
+        lethal = self.get_lethality()
+        rows = [[i.name, i.value, i.score] for i in scores.values()]
+        rows.append(['сумма', '', lethal.value])
+        rows.append(['летальность', '', lethal.score])
 
         my_table = get_my_table_string(header=False, rows=rows)
         return my_table

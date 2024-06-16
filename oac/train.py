@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     apache = ApacheIICounterFio2Less50(**patient.params.get_values())
     rep = apache()
-    #print(rep)
+    print(rep)
 
 #    patient.params.parameter_id = 'weight'
 #    patient.params.current.value = 61

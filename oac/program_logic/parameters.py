@@ -16,7 +16,6 @@ class ParametersForCurrentFunc:
 
     def __post_init__(self):
         self.data: Dict[str, BaseParameter] = load_parameters()
-        print(self.data.values())
 
     def set_current_params(self, func_id) -> dict:
         self.current_params = {i: self.data[i] for i in self.data
@@ -28,7 +27,7 @@ class ParametersForCurrentFunc:
         for i in self.current_params:
             match self.current_params[i]:
                 case param if isinstance(param, SelectedParameter):
-                    values[f'{i}_count'] = ShortParam(param.btn_text, param.count)
+                    values[f'{i}_var'] = ShortParam(param.btn_text, param.count)
                 case param if isinstance(param, BaseParameter):
                     values[i] = ShortParam(param.btn_text, param.value)
         print(values)
