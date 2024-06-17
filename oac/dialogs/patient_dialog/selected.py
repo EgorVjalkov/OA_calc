@@ -55,7 +55,7 @@ async def on_chosen_patient_parameter(c: CallbackQuery,
         patient.params.parameter_id = item_id
         set_patient(dm, patient)
 
-        if patient.params.current.fill_by_text_input:
+        if patient.params.current.fill_by_text_input == 'True':
             await dm.switch_to(state=PatientDataInput.parameter_value_input)
         else:
             await dm.switch_to(state=PatientDataInput.parameter_value_menu)
