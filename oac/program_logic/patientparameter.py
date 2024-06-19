@@ -37,7 +37,7 @@ class CompParamMenuBtn:
     id: str
     btn: str
     text_if_filled: str
-    count: int | str
+    data: str
 
     def make_button(self):
         return Btn(self.btn, self.id)
@@ -102,8 +102,8 @@ class SelectedParameter(BaseParameter):
         return f'SelectedParameter({self.id}={self.default_value})'
 
     @property
-    def count(self):
-        return self.variants[self.value].count
+    def data(self) -> str:
+        return self.variants[self.value].data
 
     @property
     def button_text(self):

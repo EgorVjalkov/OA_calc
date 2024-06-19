@@ -41,22 +41,20 @@ class Patient:
         return topics[self.func_id]
 
     def change_func(self) -> object:
-        values = self.params.get_values()
 
         match self.func_id:
             case 'blood_vol_count':
-                self.func = BloodVolCounter(**values)
+                self.func = BloodVolCounter(**self.params.get_values())
             case 'bleed_%_count':
-                self.func = BleedCounter(**values)
+                self.func = BleedCounter(**self.params.get_values())
             case 'drag_count':
-                self.func = PerWeightCounter(self.func_id, **values)
+                self.func = PerWeightCounter(self.func_id, **self.params.get_values())
             case 'sma_count':
-                self.func = SmaCounter(**values)
+                self.func = SmaCounter(**self.params.get_values())
             case 'sofa_count':
-                self.func = SofaCounter(**values)
+                self.func = SofaCounter(**self.params.get_values(like='short_params'))
             case 'apacheII_count':
-                print(self.params.current_params)
-                self.func = ApacheIICounterFio2Less50(**self.params.current_params)
+                self.func = ApacheIICounterFio2Less50(**self.params.get_values(like='short_params'))
 
         return self
 

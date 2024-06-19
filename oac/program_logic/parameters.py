@@ -22,14 +22,22 @@ class ParametersForCurrentFunc:
                                if func_id in self.data[i].func_ids}
         return self.current_params
 
-    def get_values(self):
+    def get_values(self, like: str = '') -> dict:
         values = {}
         for i in self.current_params:
-            match self.current_params[i]:
-                case param if isinstance(param, SelectedParameter):
-                    values[f'{i}_var'] = ShortParam(param.btn_text, param.count)
-                case param if isinstance(param, BaseParameter):
-                    values[i] = ShortParam(param.btn_text, param.value)
+            match like, self.current_params[i]:
+                case 'short_params', param:
+                    if isinstance(param, SelectedParameter):
+                        values[f'{i}_data'] = ShortParam(param.btn_text, param.data)
+                    else:
+                        values[i] = ShortParam(param.btn_text, param.value)
+
+                case '', param:
+                    if isinstance(param, SelectedParameter):
+                        values[f'{i}_data'] = param.data
+                    else:
+                        values[i] = param.value
+
         print(values)
         return values
 
@@ -45,7 +53,7 @@ class ParametersForCurrentFunc:
         self.current_parameter_id = param_id_from_tg
 
     @property
-    def current(self) -> LimitedParameter | SelectedParameter:
+    def current(self) -> BaseParameter:
         return self.data.get(self.current_parameter_id)
 
     @property

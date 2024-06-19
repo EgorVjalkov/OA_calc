@@ -1,68 +1,60 @@
 from dataclasses import dataclass, InitVar
 from fastnumbers import fast_real
+from typing import Dict
 
 from oac.program_logic.patientparameter import Limits
-from oac.program_logic.scale_counter import BaseScale, translation_dict
+from oac.program_logic.scale_counter import BaseScale, ScaleParam, ShortParam
 from oac.program_logic.my_table import get_my_table_string
 
 
 @dataclass
 class SofaCounter(BaseScale):
-    fio2: InitVar[float | int]
-    pao2: InitVar[int]
-    resp_support_count: InitVar[str]
-    plt: int
-    bili: int
-    hypotension_count: int
-    glasgow: int
-    crea: InitVar[int]
-    diuresis: InitVar[int]
+    fio2: InitVar[ShortParam]
+    pao2: InitVar[ShortParam]
+    resp_support_data: InitVar[ShortParam]
+    plt: ShortParam
+    bili: ShortParam
+    hypotension_data: ShortParam
+    glasgow: ShortParam
+    crea: InitVar[ShortParam]
+    diuresis: InitVar[ShortParam]
 
-    def __post_init__(self, fio2, pao2, resp_support_count, crea, diuresis):
+    def __post_init__(self, fio2, pao2, resp_support_data, crea, diuresis):
         super().__post_init__()
         self.get_scale_frame('sofa')
 
-        self.respiration: str = resp_support_count
-        self.oxygenation_index = int(pao2/fio2)
-        self.crea: int = crea
-        self.diuresis: int = diuresis
+        self.respiration: ShortParam = resp_support_data
+        self.oxygenation_index = int(pao2.value/fio2.value)
+        self.crea: ShortParam = crea
+        self.diuresis: ShortParam = diuresis
 
-    def get_oxygenation_score(self) -> int:
-        oxy_ser = self.get_score_scale(self.respiration)
+    def get_oxygenation_score(self) -> ScaleParam:
+        oxy_ser = self.get_score_scale(self.respiration.value)
         for score in oxy_ser.index:
             cell_data = oxy_ser[score]
             limits = Limits(
                 *[fast_real(e) for e in cell_data.split()])
             if self.oxygenation_index in limits:
-                return score
+                return ScaleParam('оксигенация',
+                                  f'{self.oxygenation_index}({self.respiration.value})',
+                                  score)
 
-    def get_excretion_count(self) -> int:
-        diuresis_score = self.get_score('diuresis')
-        crea_score = self.get_score('crea')
-        print(diuresis_score)
+    def get_excretion_score(self) -> ScaleParam:
+        diuresis_score: ScaleParam = self.get_score('diuresis')
+        crea_score: ScaleParam = self.get_score('crea')
         match diuresis_score:
             case None:
                 return crea_score
-            case int(d) if d >= crea_score:
+            case d if d.score >= crea_score.score:
                 return diuresis_score
-            case int(d) if d < crea_score:
+            case d if d.score < crea_score.score:
                 return crea_score
 
-    def get_sofa_scores(self):
+    def get_sofa_scores(self) -> Dict[str, ScaleParam]:
         scores = {'oxygenation': self.get_oxygenation_score()}
         scores.update(self.get_simple_scores())
-        scores['excretion'] = self.get_excretion_count()
-
-        self.total_score = sum(scores.values())
-
+        scores['excretion'] = self.get_excretion_score()
         return scores
 
     def __call__(self, *args, **kwargs):
-        scores = self.get_sofa_scores()
-        rows = [['индекс оксигенации', self.oxygenation_index]]
-        rows.extend([[translation_dict[i], scores[i]] for i in scores])
-        rows.append(['сумма', self.total_score])
-        rows.append(['летальность', self.get_lethality()])
-
-        my_table = get_my_table_string(header=False, rows=rows)
-        return my_table
+        return BaseScale.__call__(self, self.get_sofa_scores)

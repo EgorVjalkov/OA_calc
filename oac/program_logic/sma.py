@@ -26,9 +26,9 @@ bupivacaine_dosage = {
 class SmaCounter:
     weight: int
     height: int
-    fetus_count: int
-    bladder_count: int
-    discomfort_count: int
+    fetus_data: int
+    bladder_data: int
+    discomfort_data: int
 
     def __post_init__(self):
         bmi = round(self.weight / pow(self.height / 100, 2), 1)
@@ -38,10 +38,10 @@ class SmaCounter:
                 break
 
     def count_a_sum(self) -> int:
-        sum_of_factors = sum((self.bmi_count, self.fetus_count, self.bladder_count))
+        sum_of_factors = sum((self.bmi_count, self.fetus_data, self.bladder_data))
 
-        if sum_of_factors <= 0 and self.discomfort_count:
-            sum_of_factors += self.discomfort_count
+        if sum_of_factors <= 0 and self.discomfort_data:
+            sum_of_factors += self.discomfort_data
 
         if sum_of_factors >= 4:
             sum_of_factors = 4

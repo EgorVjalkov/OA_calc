@@ -60,15 +60,4 @@ class ApacheIICounterFio2Less50(BaseScale):
         return scores
 
     def __call__(self, *args, **kwargs):
-        scores = self.get_apacheII_scores()
-        self.get_total_score(scores)
-        lethal = self.get_lethality()
-        rows = [[i.name, i.value, i.score] for i in scores.values()]
-        rows.append(['сумма', '', lethal.value])
-        rows.append(['летальность', '', lethal.score])
-
-        my_table = get_my_table_string(header=False, rows=rows)
-        return my_table
-
-
-
+        return BaseScale.__call__(self.get_apacheII_scores)

@@ -1,11 +1,12 @@
 import pandas as pd
 from dataclasses import dataclass, fields
-from typing import Optional
+from typing import Optional, Callable
 from fastnumbers import fast_real, fast_int
 from collections import namedtuple
 
 from oac.program_logic.patientparameter import Limits
 from oac.program_logic.parameters import ShortParam
+from oac.program_logic.my_table import get_my_table_string
 
 
 translation_dict = {
@@ -69,3 +70,14 @@ class BaseScale:
 
     def get_lethality(self):
         return self.get_score('total_score')
+
+    def __call__(self, get_scores: Callable, *args, **kwargs):
+        scores: dict = get_scores()
+        self.get_total_score(scores)
+        lethal = self.get_lethality()
+        rows = [[i.name, i.value, i.score] for i in scores.values()]
+        rows.append(['сумма', '', lethal.value])
+        rows.append(['летальность', '', lethal.score])
+
+        my_table = get_my_table_string(header=False, rows=rows)
+        return my_table
