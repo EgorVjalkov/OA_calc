@@ -7,7 +7,7 @@ from oac.program_logic.patientparameter import SelectedParameter
 test_params = (
     0.21,
     40,
-    'ivl_resp',
+    'nivl_resp',
     110,
     35,
     'mid_hp',
@@ -16,10 +16,29 @@ test_params = (
     500,
 )
 
+apache_test = (
+    56,
+    15,
+    40,
+    56,
+    40.2,
+    62,
+    130.2,
+    25,
+    7.000,
+    135.2,
+    4,
+    0.452,
+    22,
+    'chronic',
+    'emerg'
+)
+
 patient = Patient()
-patient.func_id = 'sofa_count'
+patient.func_id = 'apacheIIFio2less50_count'
 patient.params.set_current_params(patient.func_id)
-g = (i for i in test_params)
+print(patient.params.current_params)
+g = (i for i in apache_test)
 for p in patient.params.current_params:
     patient.params.parameter_id = p
     patient.params.current.value = next(g)
@@ -50,25 +69,6 @@ rep = patient.get_result()
 print(rep)
 
 
-
-#
-# apache_test = (
-#     56,
-#     13,
-#     40,
-#     56,
-#     40.2,
-#     62,
-#     130.2,
-#     25,
-#     7.000,
-#     135.2,
-#     4,
-#     0.452,
-#     22,
-#     'chronic',
-#     'emerg'
-# )
 #
 #
 # def gen():

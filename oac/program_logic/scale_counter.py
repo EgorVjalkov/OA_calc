@@ -50,10 +50,15 @@ class BaseScale:
 
         for score in score_scale.index:
             cell_data = score_scale[score]
-            limits = Limits(
-                *[fast_real(e) for e in cell_data.split()])
-            if param.value in limits:
-                return ScaleParam(param.name, param.value, score)
+            if '*' in cell_data:
+                if param.value == cell_data.replace('*', ''):
+                    return ScaleParam(param.name, param.value, score)
+
+            else:
+                limits = Limits(
+                    *[fast_real(e) for e in cell_data.split()])
+                if param.value in limits:
+                    return ScaleParam(param.name, param.value, score)
 
     def get_simple_scores(self):
         field_names = [i.name for i in fields(self)]

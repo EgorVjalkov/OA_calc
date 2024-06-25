@@ -24,16 +24,16 @@ class ApacheIICounterFio2Less50(BaseScale):
     WBC: ShortParam
 
     glasgow: InitVar[ShortParam]
-    chronic_var: InitVar[ShortParam]
-    operation_var: InitVar[ShortParam]
+    chronic_data: InitVar[ShortParam]
+    operation_data: InitVar[ShortParam]
 
-    def __post_init__(self, glasgow, chronic_var, operation_var):
+    def __post_init__(self, glasgow, chronic_data, operation_data):
         super().__post_init__()
         self.get_scale_frame('apacheII')
 
         self.glasgow_param = glasgow
-        self.chronic_param = chronic_var
-        self.operation_param = operation_var
+        self.chronic_param = chronic_data
+        self.operation_param = operation_data
 
     def get_CHP_score(self) -> int:
         print(self.chronic_param, self.operation_param)
@@ -60,4 +60,12 @@ class ApacheIICounterFio2Less50(BaseScale):
         return scores
 
     def __call__(self, *args, **kwargs):
-        return BaseScale.__call__(self.get_apacheII_scores)
+        return BaseScale.__call__(self, get_scores=self.get_apacheII_scores)
+
+
+@dataclass
+class ApacheIICounter(ApacheIICounterFio2Less50):
+    paco2: int
+
+    def __post_init__(self, glasgow, chronic_data, operation_data):
+        super().__post_init__(glasgow, chronic_data, operation_data)

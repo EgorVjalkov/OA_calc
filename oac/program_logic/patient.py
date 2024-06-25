@@ -7,7 +7,7 @@ from oac.program_logic.blood_counter import BloodVolCounter, BleedCounter
 from oac.program_logic.drag import PerWeightCounter
 from oac.program_logic.sma import SmaCounter
 from oac.program_logic.sofa_counter import SofaCounter
-from oac.program_logic.apacheII_counter import ApacheIICounterFio2Less50
+from oac.program_logic.apacheII_counter import ApacheIICounterFio2Less50, ApacheIICounter
 
 
 class Patient:
@@ -53,8 +53,10 @@ class Patient:
                 self.func = SmaCounter(**self.params.get_values())
             case 'sofa_count':
                 self.func = SofaCounter(**self.params.get_values(like='short_params'))
-            case 'apacheII_count':
+            case 'apacheIIFio2less50_count':
                 self.func = ApacheIICounterFio2Less50(**self.params.get_values(like='short_params'))
+            case 'apacheII_count':
+                self.func = ApacheIICounter(**self.params.get_values(like='short_params'))
 
         return self
 

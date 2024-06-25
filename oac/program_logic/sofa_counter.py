@@ -1,4 +1,6 @@
 from dataclasses import dataclass, InitVar
+
+import pandas as pd
 from fastnumbers import fast_real
 from typing import Dict
 
@@ -29,14 +31,24 @@ class SofaCounter(BaseScale):
         self.diuresis: ShortParam = diuresis
 
     def get_oxygenation_score(self) -> ScaleParam:
-        oxy_ser = self.get_score_scale(self.respiration.value)
+        oxy_ser = pd.Series(dtype=object)
+
+        oxy_dict = {
+            ('без поддержки', 'увл. О2'): 'no_resp_support',
+            ('НИВЛ', 'ИВЛ'): 'resp_support',
+        }
+
+        for i in oxy_dict:
+            if self.respiration.value in i:
+                oxy_ser = self.get_score_scale(oxy_dict[i])
+
         for score in oxy_ser.index:
             cell_data = oxy_ser[score]
             limits = Limits(
                 *[fast_real(e) for e in cell_data.split()])
             if self.oxygenation_index in limits:
-                return ScaleParam('оксигенация',
-                                  f'{self.oxygenation_index}({self.respiration.value})',
+                return ScaleParam(f'pao2/fio2 ({self.respiration.value})',
+                                  f'{self.oxygenation_index}',
                                   score)
 
     def get_excretion_score(self) -> ScaleParam:
