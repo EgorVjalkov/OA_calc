@@ -17,31 +17,37 @@ test_params = (
 )
 
 apache_test = (
+    0.56, #fio2
     56,
     15,
-    40,
-    56,
-    40.2,
-    62,
-    130.2,
-    25,
-    7.000,
     135.2,
+    40,
+    40.2,
+    60,
+    120,
+    20,
+    35, #paco2
+    7.000,
+    130.2,
     4,
     0.452,
     22,
     'chronic',
-    'emerg'
+    'emerg',
 )
 
 patient = Patient()
-patient.func_id = 'apacheIIFio2less50_count'
+#patient.func_id = 'apacheIIFio2less50_count'
+patient.func_id = 'apacheII_count'
 patient.params.set_current_params(patient.func_id)
 print(patient.params.current_params)
 g = (i for i in apache_test)
 for p in patient.params.current_params:
+    param = next(g)
+    print(p, param)
     patient.params.parameter_id = p
-    patient.params.current.value = next(g)
+    patient.params.current.value = param
+
 
 print(patient.params.current_params)
 

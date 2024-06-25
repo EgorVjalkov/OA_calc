@@ -14,8 +14,8 @@ delta_p = float(patm_spb - ph2o)
 @dataclass
 class AaDO2Counter:
     age: int
-    fio2: float
     pao2: int
+    fio2: float
     paco2: int
     temp: float
 
@@ -27,6 +27,7 @@ class AaDO2Counter:
 
     def __call__(self, mode='', *args, **kwargs) -> float | str:
         real_aado2 = self.get_aado2()
+        print(real_aado2)
 
         if mode == 'for_print':
             norm_aado2 = self.get_age_norm()
