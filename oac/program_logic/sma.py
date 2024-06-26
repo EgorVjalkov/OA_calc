@@ -64,12 +64,15 @@ class SmaCounter:
 
     def __call__(self, *args, **kwargs) -> str:
         dose_for_lying = self.get_anesthetic_dose(self.count_a_sum())
+
         hyperbaric = round(dose_for_lying+0.4, 1)
-        isobaric = round(dose_for_lying+1.2, 1)
+        weighted = round(hyperbaric + hyperbaric*0.16, 1)
+        levo = round(dose_for_lying+1.2, 1)
         rows = [
             ['тип анестетика', 'доза в мл'],
-            ['гипербарический', f'{hyperbaric}мл'],
-            ['изобарический', f'{isobaric}мл'],
+            ['бупивакаин хэви', f'{hyperbaric}мл'],
+            ['бупивакаин утяжеленный', f'{weighted}мл'],
+            ['левобупивакаин', f'{levo}мл'],
         ]
         return get_my_table_string(fields=[], rows=rows, header=False)
 

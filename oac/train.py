@@ -3,6 +3,7 @@ from dataclasses import dataclass, fields
 from collections import namedtuple
 from oac.program_logic.apacheII_counter import ApacheIICounterFio2Less50
 from oac.program_logic.patientparameter import SelectedParameter
+from fastnumbers import fast_real
 
 test_params = (
     0.21,
@@ -115,3 +116,13 @@ print(rep)
 #    result = patient.get_result()
 #    rep = patient.get_reports(last=True)
 #    print(rep)
+
+value = ['0', '0.00', '56', 'sldkfjs']
+
+for v in value:
+    v = fast_real(v)
+    print(v)
+    if not v:
+        print(v, 'ноль')
+    else:
+        print(v, 'неноль')

@@ -70,10 +70,11 @@ class BaseParameter:
 
     @property
     def button_text(self):
-        if self.value:
-            return self.btn_text_filled.format(self.value)
-        else:
+        value = fast_real(self.value)
+        if not value:
             return self.btn_text
+        else:
+            return self.btn_text_filled.format(self.value)
 
 
 @dataclass
