@@ -6,6 +6,7 @@ class PatientDataInput(StatesGroup):
     sma_confirm = State()
     apache_change = State()
     patient_parameters_menu = State()
+    scrolling_patient_parameters_menu = State()
     parameter_value_input = State()
     parameter_value_menu = State()
     report_menu = State()

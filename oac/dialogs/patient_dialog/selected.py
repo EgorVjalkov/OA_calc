@@ -32,7 +32,7 @@ async def on_chosen_func(c: CallbackQuery,
                          w: Select,
                          dm: DialogManager,
                          item_id: str,
-                         **kwargs) -> None:
+                         **kwargs) -> None: # рефактор
     if item_id != 'apacheII_count':
         patient: Patient = get_patient(dm)
         patient.func_id = item_id
@@ -41,7 +41,10 @@ async def on_chosen_func(c: CallbackQuery,
         if item_id == 'sma_count':
             await dm.switch_to(state=PatientDataInput.sma_confirm)
         else:
-            await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
+            if patient.need_scrolling_params:
+                await dm.switch_to(state=PatientDataInput.scrolling_patient_parameters_menu)
+            else:
+                await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
 
     else:
         await dm.switch_to(state=PatientDataInput.apache_change)
@@ -57,7 +60,7 @@ async def on_chosen_apache_scale(c: CallbackQuery,
     patient: Patient = get_patient(dm)
     patient.func_id = item_id
     set_patient(dm, patient)
-    await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
+    await dm.switch_to(state=PatientDataInput.scrolling_patient_parameters_menu)
 
 
 async def on_chosen_patient_parameter(c: CallbackQuery,
@@ -98,14 +101,16 @@ async def on_entered_parameter_value(m: Message,
         case LimitedParameter():
             if value in patient.params.current.limits:
                 patient.params.current.value = value
-                set_patient(dm, patient)
-                await dm.switch_to(PatientDataInput.patient_parameters_menu)
 
         case BaseParameter():
             if value > 0:
                 patient.params.current.value = value
-                set_patient(dm, patient)
-                await dm.switch_to(PatientDataInput.patient_parameters_menu)
+
+    set_patient(dm, patient)
+    if patient.need_scrolling_params:
+        await dm.switch_to(PatientDataInput.scrolling_patient_parameters_menu)
+    else:
+        await dm.switch_to(PatientDataInput.patient_parameters_menu)
 
 
 async def on_chosen_parameter_value(m: CallbackQuery,
@@ -118,7 +123,10 @@ async def on_chosen_parameter_value(m: CallbackQuery,
     print(patient.params.current.value, patient.params.current.button_text)
     print(patient.params.current)
     set_patient(dm, patient)
-    await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
+    if patient.need_scrolling_params:
+        await dm.switch_to(PatientDataInput.scrolling_patient_parameters_menu)
+    else:
+        await dm.switch_to(PatientDataInput.patient_parameters_menu)
 
 
 async def on_send_report_msg(c: CallbackQuery,

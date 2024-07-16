@@ -42,6 +42,13 @@ class Patient:
         return topics.get(self.func_id,
                           'Выберите параметр, затем или введите данные с клавиатуры, или выберите пункт меню')
 
+    @property
+    def need_scrolling_params(self):
+        if self.func_id in ['sofa_count', 'apacheII_count', 'apacheIIFio2less50_count']:
+            return True
+        else:
+            return False
+
     def change_func(self) -> object:
 
         match self.func_id:

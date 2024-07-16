@@ -57,6 +57,19 @@ def select_patient_patameter_menu() -> Window:
     )
 
 
+def scrolling_patient_patameter_menu() -> Window:
+    return Window(
+        Format('{topic}'),
+        kbs.scroll_group_kb_by_attr(selected.on_chosen_patient_parameter,
+                             'pat_param', 'patient_parameters'),
+        SwitchTo(Const('<< назад'),
+                 id='sw_func_menu',
+                 state=PatientDataInput.func_menu),
+        state=PatientDataInput.scrolling_patient_parameters_menu,
+        getter=getters.get_data_for_params_menu,
+    )
+
+
 def input_window() -> Window:
     return Window(
         Format('{topic}'),
@@ -115,6 +128,7 @@ patient_dialog = Dialog(greet_window(),
                         sma_confirm_window(),
                         apache_change_window(),
                         select_patient_patameter_menu(),
+                        scrolling_patient_patameter_menu(),
                         change_param_value_menu(),
                         input_window(),
                         report_window(),
