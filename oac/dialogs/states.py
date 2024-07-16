@@ -4,6 +4,7 @@ from aiogram.filters.state import State, StatesGroup
 class PatientDataInput(StatesGroup):
     func_menu = State()
     sma_confirm = State()
+    apache_change = State()
     patient_parameters_menu = State()
     parameter_value_input = State()
     parameter_value_menu = State()

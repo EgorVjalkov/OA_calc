@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from typing import Optional, Dict
 from collections import namedtuple
 
+from fastnumbers import fast_real
+
 from oac.program_logic.patientparameter import (load_parameters, Btn,
                                                 LimitedParameter, SelectedParameter, BaseParameter)
 
@@ -58,11 +60,18 @@ class ParametersForCurrentFunc:
 
     @property
     def all_params_filled(self) -> bool:
-        values = [i for i in self.current_params if not self.current_params[i].value]
-        return len(values) == 0
+        for i in self.current_params:
+            val = self.current_params[i].value
+            real = fast_real(val)
+            print(val, real, type(real))
+            if not real:
+                print(val, real, type(real))
+                return False
+        else:
+            return True
 
     def get_btns(self) -> list:
         btns_list = [Btn(self.data[i].button_text, i) for i in self.current_params]
         if self.all_params_filled:
-            btns_list.append(Btn('рассчитать', 'count'))
+            btns_list.append(Btn('рассчитать', 'count')) # сделать insert?
         return btns_list

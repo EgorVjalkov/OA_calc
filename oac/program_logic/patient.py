@@ -7,14 +7,15 @@ from oac.program_logic.blood_counter import BloodVolCounter, BleedCounter
 from oac.program_logic.drag import PerWeightCounter
 from oac.program_logic.sma import SmaCounter
 from oac.program_logic.sofa_counter import SofaCounter
-from oac.program_logic.apacheII_counter import ApacheIICounterFio2Less50, ApacheIICounter
+from oac.program_logic.apacheII_counter import ApacheIIBase, ApacheIICounterFio2Less50, ApacheIICounter
 
 
 class Patient:
     def __init__(self):
         self.current_function_id: Optional[str] = None
         self.params = ParametersForCurrentFunc()
-        self.func: Optional[BloodVolCounter | PerWeightCounter | SmaCounter] = None
+        self.func: Optional[BloodVolCounter | PerWeightCounter | SmaCounter |
+                            SofaCounter | ApacheIIBase] = None
         self.results = defaultdict(dict)
 
         self.variants_for_tg: Optional[list] = None
@@ -38,7 +39,8 @@ class Patient:
 
     @property
     def topic(self):
-        return topics[self.func_id]
+        return topics.get(self.func_id,
+                          'Выберите параметр, затем или введите данные с клавиатуры, или выберите пункт меню')
 
     def change_func(self) -> object:
 

@@ -33,13 +33,31 @@ async def on_chosen_func(c: CallbackQuery,
                          dm: DialogManager,
                          item_id: str,
                          **kwargs) -> None:
+    if item_id != 'apacheII_count':
+        patient: Patient = get_patient(dm)
+        patient.func_id = item_id
+        set_patient(dm, patient)
+
+        if item_id == 'sma_count':
+            await dm.switch_to(state=PatientDataInput.sma_confirm)
+        else:
+            await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
+
+    else:
+        await dm.switch_to(state=PatientDataInput.apache_change)
+
+
+async def on_chosen_apache_scale(c: CallbackQuery,
+                                 w: Select,
+                                 dm: DialogManager,
+                                 item_id: str,
+                                 **kwargs) -> None:
+
+    print(item_id)
     patient: Patient = get_patient(dm)
     patient.func_id = item_id
-    print(patient)
-    if item_id == 'sma_count':
-        await dm.switch_to(state=PatientDataInput.sma_confirm)
-    else:
-        await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
+    set_patient(dm, patient)
+    await dm.switch_to(state=PatientDataInput.patient_parameters_menu)
 
 
 async def on_chosen_patient_parameter(c: CallbackQuery,

@@ -5,7 +5,7 @@ from aiogram_dialog.widgets.input.text import TextInput
 
 from oac.dialogs.states import PatientDataInput
 from oac.dialogs.patient_dialog import getters, kbs, selected
-from oac.dialogs.variants_with_id import sma_confirm_text
+from oac.dialogs.variants_with_id import sma_confirm_text, apache_text
 
 
 def greet_window() -> Window:
@@ -28,6 +28,19 @@ def sma_confirm_window():
                  id='sw_to_input',
                  state=PatientDataInput.patient_parameters_menu),
         state=PatientDataInput.sma_confirm
+    )
+
+
+def apache_change_window() -> Window:
+    return Window(
+        Const(apache_text),
+        kbs.group_kb_by_item(selected.on_chosen_apache_scale,
+                             'apache', 'apaches'),
+        SwitchTo(Const('<< назад'),
+                 id='sw_func_menu',
+                 state=PatientDataInput.func_menu),
+        state=PatientDataInput.apache_change,
+        getter=getters.get_apaches,
     )
 
 
@@ -100,6 +113,7 @@ def finish_window():
 
 patient_dialog = Dialog(greet_window(),
                         sma_confirm_window(),
+                        apache_change_window(),
                         select_patient_patameter_menu(),
                         change_param_value_menu(),
                         input_window(),

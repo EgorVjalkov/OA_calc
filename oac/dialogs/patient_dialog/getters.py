@@ -5,7 +5,7 @@ from aiogram.fsm.state import State
 
 from oac.dialogs.states import PatientDataInput, Theory
 from oac.program_logic.patient import Patient
-from oac.dialogs.variants_with_id import funcs
+from oac.dialogs.variants_with_id import funcs, apaches
 from oac.dialogs.patient_dialog.selected import get_patient
 
 
@@ -18,6 +18,12 @@ async def get_funcs(dialog_manager: DialogManager,
         data['finish'] = 'печать результатов'
     else:
         data['finish'] = 'никаких задач'
+    return data
+
+
+async def get_apaches(dialog_manager: DialogManager,
+                      **middleware_daa) -> dict:
+    data = {'apaches': apaches}
     return data
 
 

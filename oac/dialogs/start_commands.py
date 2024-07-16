@@ -35,7 +35,7 @@ async def kes(message: Message,
               dialog_manager: DialogManager) -> None:
     await dialog_manager.start(KES.menu,
                                data={'kes': KesCalculator()},
-                               # mode=StartMode.RESET_STACK,
+                               mode=StartMode.RESET_STACK,
                                )
 
 
