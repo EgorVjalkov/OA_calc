@@ -75,16 +75,17 @@ class Patient:
         self.results[self.func_id].update({
             'parameters': params,
             'result': result})
-        self.func = None   # ???
+        #self.func = None   # ???
         return result
 
     def get_reports(self, last: bool = False) -> str:
         answer = []
 
-        result_keys = list(self.results.keys())
         if last:
-            result_keys = [result_keys[-1]]
+            result_keys = [self.func_id]
+            self.func_id = None
         else:
+            result_keys = list(self.results.keys())
             answer.append("Ваши результаты.")
 
         for result in result_keys:
