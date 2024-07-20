@@ -83,7 +83,6 @@ class Patient:
 
         if last:
             result_keys = [self.func_id]
-            self.func_id = None
         else:
             result_keys = list(self.results.keys())
             answer.append("Ваши результаты.")
