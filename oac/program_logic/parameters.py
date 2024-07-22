@@ -40,7 +40,6 @@ class ParametersForCurrentFunc:
                     else:
                         values[i] = param.value
 
-        print(values)
         return values
 
     def extract(self):
@@ -63,9 +62,7 @@ class ParametersForCurrentFunc:
         for i in self.current_params:
             val = self.current_params[i].value
             real = fast_real(val)
-            print(val, real, type(real))
             if not real:
-                print(val, real, type(real))
                 return False
         else:
             return True

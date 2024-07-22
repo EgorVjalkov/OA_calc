@@ -35,7 +35,7 @@ class ApacheIIBase(BaseScale):
         self.operation_param = operation_data
 
     def get_CHP_score(self) -> int:
-        print(self.chronic_param, self.operation_param)
+        #print(self.chronic_param, self.operation_param)
         match self.chronic_param.value, self.operation_param.value:
             case 'chronic', 'elect':
                 return 2
@@ -79,6 +79,6 @@ class ApacheIICounter(ApacheIICounterFio2Less50):
 
     def __post_init__(self, glasgow, chronic_data, operation_data, fio2, pao2, paco2):
         super().__post_init__(glasgow, chronic_data, operation_data)
-        print([self.age, fio2, pao2, paco2, self.body_temp])
+        #print([self.age, fio2, pao2, paco2, self.body_temp])
         args = [p.value for p in [self.age, fio2, pao2, paco2, self.body_temp]]
         self.aado2 = ShortParam('AaDO2', AaDO2Counter(*args).__call__())

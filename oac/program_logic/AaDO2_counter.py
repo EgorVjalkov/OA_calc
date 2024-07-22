@@ -42,15 +42,3 @@ class AaDO2Counter:
 
         else:
             return real_aado2
-
-
-aado2 = AaDO2Counter(
-    47,
-    0.55,
-    56,
-    45,
-    36.6
-)
-
-rep = aado2()
-print(rep)

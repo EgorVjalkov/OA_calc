@@ -164,7 +164,7 @@ class LimitedParameter(NumericParameter):
 
 def init_example_by_fields(cls, kwargs_dict) -> BaseParameter:
     cls_fields = [i.name for i in dataclasses.fields(cls)]
-    print([kwargs_dict[i] for i in kwargs_dict if i in cls_fields])
+    #print([kwargs_dict[i] for i in kwargs_dict if i in cls_fields])
     return cls(*[kwargs_dict[i] for i in kwargs_dict if i in cls_fields])
 
 
@@ -182,7 +182,7 @@ def load_parameters() -> dict:
         parameter = None
         row_dict = param_df.loc[param_row].to_dict()
         #print(row_dict['id'], row_dict['fill_by_text_input'], row_dict['limits'])
-        print(type(row_dict['default_value']))
+        #print(type(row_dict['default_value']))
 
         match row_dict:
             case {'fill_by_text_input': 'True', 'limits': 'no limits'}:
@@ -203,7 +203,7 @@ def load_parameters() -> dict:
                 parameter = init_example_by_fields(SelectedParameter, row_dict)
             case _:
                 print('error')
-        print(parameter)
+        #print(parameter)
         params_dict[parameter.id] = parameter
 
     return params_dict
