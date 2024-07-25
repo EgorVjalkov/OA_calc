@@ -4,7 +4,7 @@ from aiogram_dialog.widgets.kbd import Cancel, SwitchTo
 from aiogram_dialog.widgets.input.text import TextInput
 
 from oac.dialogs.patient_dialog.selected import on_adieu
-from oac.dialogs.patient_dialog import kbs
+from oac.dialogs.patient_dialog.my_wins_kbs_btns import Keyboard
 from oac.dialogs.states import KES
 from oac.dialogs.KES_dialog import KES_getters, KES_selected
 
@@ -27,8 +27,8 @@ def KES_menu_window() -> Window:
 def time_calculator_menu() -> Window:
     return Window(
         Const('Выберите пункт меню'),
-        kbs.group_kb_by_attr(KES_selected.on_chosen_kes_parameter,
-                             's_time', 'time_for_KES'),
+        Keyboard('simple_by_attr', 's_time', 'time_for_KES'
+                 ).get_kb(KES_selected.on_chosen_kes_parameter),
         SwitchTo(Const('<< назад'),
                  id='sw_KES_menu',
                  state=KES.menu),

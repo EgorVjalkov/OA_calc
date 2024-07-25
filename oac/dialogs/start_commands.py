@@ -4,7 +4,7 @@ from aiogram.filters import Command
 
 from aiogram_dialog import StartMode, DialogManager
 
-from oac.dialogs.states import PatientDataInput, FeedBack, Theory, KES
+from oac.dialogs.states import PatientSession, FeedBack, Theory, KES
 from oac.program_logic.patient import Patient
 from oac.dialogs.patient_dialog.selected import get_patient
 from oac.dialogs.KES_dialog.KES_calculator import KesCalculator
@@ -24,7 +24,7 @@ async def start_dialog(message: Message):
 @router.message(Command('new_patient'))
 async def new_patient(message: Message,
                       dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(PatientDataInput.func_menu,
+    await dialog_manager.start(PatientSession.func_menu,
                                data={'patient': Patient()},
                                mode=StartMode.RESET_STACK,
                                )

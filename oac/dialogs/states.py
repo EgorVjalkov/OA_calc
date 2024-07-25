@@ -1,7 +1,7 @@
 from aiogram.filters.state import State, StatesGroup
 
 
-class PatientDataInput(StatesGroup):
+class PatientSession(StatesGroup):
     func_menu = State()
     sma_confirm = State()
     apache_change = State()
@@ -9,10 +9,9 @@ class PatientDataInput(StatesGroup):
     patient_parameters_menu = State()
     patient_parameters_menu_if_scrolling = State()
 
-    value_input_by_kb = State()
-    value_input_by_kb_if_scrolling = State()
+    value_textinput = State()
 
-    value_input_menu = State()
+    value_onclickinput = State()
     value_input_menu_if_scrolling = State()
 
     report_menu = State()

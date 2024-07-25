@@ -1,10 +1,40 @@
 import operator
 from dataclasses import dataclass
 
-from aiogram_dialog.widgets.kbd import ScrollingGroup, Select, Group
-from aiogram_dialog.widgets.text import Format
+from aiogram.fsm.state import State
+from aiogram_dialog import Window
+from aiogram_dialog.widgets.text import Const, Format
+from aiogram_dialog.widgets.kbd import SwitchTo, Group, ScrollingGroup, Button, Select
+
+from oac.dialogs.states import PatientSession
+from oac.dialogs.patient_dialog import getters
+
 
 SCROLLING_HEIGHT = 5
+
+
+class ParamsWindow(Window):
+    def __init__(self,
+                 keyboard: Group | ScrollingGroup,
+                 state: State):
+        super().__init__(
+            Format('{topic}'),
+            keyboard,
+            SwitchTo(Const('<< назад'),
+                     id='sw_back',
+                     state=PatientSession.func_menu),
+            state=state,
+            getter=getters.get_data_for_params_menu,
+        )
+
+
+class MyBackButton(Button):
+    def __init__(self, on_click, text: str = '<< назад'):
+        super().__init__(
+            Const(text),
+            id='back',
+            on_click=on_click
+        )
 
 
 class MySelectByItem(Select):
@@ -59,65 +89,3 @@ class Keyboard:
                     width=1
                 )
 
-
-def group_kb_by_attr(on_click, id_: str, select_items: str, ):
-    group_id = f'g_{id_}'
-    select_id = f's_{id_}'
-    return Group(
-        Select(
-            Format('{item.text}'), #
-            id=select_id,
-            item_id_getter=operator.attrgetter('id'),
-            items=select_items,
-            on_click=on_click
-        ),
-        id=group_id,
-        width=1,
-    )
-
-
-def scroll_group_kb_by_attr(on_click, id_: str, select_items: str, ):
-    group_id = f'g_{id_}'
-    select_id = f's_{id_}'
-    return ScrollingGroup(
-        Select(
-            Format('{item.text}'), #
-            id=select_id,
-            item_id_getter=operator.attrgetter('id'),
-            items=select_items,
-            on_click=on_click
-        ),
-        id=group_id,
-        width=1,
-        height=SCROLLING_HEIGHT
-    )
-
-
-def group_kb_by_item(on_click, id_: str, select_items: str):
-    group_id = f'g_{id_}'
-    select_id = f's_{id_}'
-    return Group(
-        Select(
-            Format('{item[0]}'),
-            id=select_id,
-            item_id_getter=operator.itemgetter(1),
-            items=select_items,
-            on_click=on_click
-        ),
-        id=group_id,
-        width=1
-    )
-
-
-def paginated_kb(on_click):
-    return ScrollingGroup(
-        Select(
-            Format('{item[0]}'),
-            id='s_scroll_funcs',
-            item_id_getter=operator.itemgetter(1),
-            items='funcs',
-            on_click=on_click
-        ),
-        id='func_ids',
-        width=1, height=SCROLLING_HEIGHT,
-    )
