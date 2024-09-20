@@ -102,6 +102,7 @@ class PerWeightCounter:
         my_table = get_my_table_string(
             fields=['препарат', 'расчет', 'доза', 'ед'],
             rows=drag_list,
+            divider=' | '
         )
         return my_table
 
