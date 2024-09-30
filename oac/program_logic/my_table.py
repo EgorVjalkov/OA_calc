@@ -15,7 +15,7 @@ from  prettytable import PrettyTable
 #
 #    return my_table.get_string()
 
-def get_my_table_string(rows: list, fields: Iterable = (), divider: str = ' -> ') -> str:
+def get_my_table_string(rows: list, fields: Iterable = (), header: bool = True, divider: str = ' -> ') -> str:
     rows = [[str(i) for i in row] for row in rows]
     rows = [divider.join(i) for i in rows]
     if fields:
