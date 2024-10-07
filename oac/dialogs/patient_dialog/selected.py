@@ -62,16 +62,12 @@ async def on_chosen_patient_parameter(c: CallbackQuery,
                                       dm: DialogManager,
                                       item_id: str,
                                       **kwargs) -> None:
-    if 'count' in item_id:
-        await dm.switch_to(state=PatientSession.report_menu)
-
+    patient = get_patient(dm)
+    patient.params.parameter_id = item_id
+    if patient.params.current.fill_by_text_input == 'True':
+        await dm.switch_to(state=PatientSession.value_textinput)
     else:
-        patient = get_patient(dm)
-        patient.params.parameter_id = item_id
-        if patient.params.current.fill_by_text_input == 'True':
-            await dm.switch_to(state=PatientSession.value_textinput)
-        else:
-            await dm.switch_to(state=PatientSession.value_onclickinput)
+        await dm.switch_to(state=PatientSession.value_onclickinput)
 
 
 async def on_entered_parameter_value(m: Message,
@@ -84,6 +80,7 @@ async def on_entered_parameter_value(m: Message,
     value = input_data.replace(',', '.')
 
     if not isreal(value):
+        await m.answer('недопустимое значение')
         return
 
     patient = get_patient(dm)
@@ -93,10 +90,16 @@ async def on_entered_parameter_value(m: Message,
         case LimitedParameter():
             if value in patient.params.current.limits:
                 patient.params.current.value = value
+            else:
+                await m.answer('недопустимое значение')
+                return
 
         case BaseParameter():
             if value > 0:
                 patient.params.current.value = value
+            else:
+                await m.answer('недопустимое значение')
+                return
 
     if patient.need_scrolling_params:
         await dm.switch_to(PatientSession.patient_parameters_menu_if_scrolling)

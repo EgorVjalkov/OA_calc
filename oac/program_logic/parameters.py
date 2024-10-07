@@ -69,6 +69,4 @@ class ParametersForCurrentFunc:
 
     def get_btns(self) -> list:
         btns_list = [Btn(self.data[i].button_text, i) for i in self.current_params]
-        if self.all_params_filled:
-            btns_list.append(Btn('рассчитать', 'count')) # сделать insert?
         return btns_list

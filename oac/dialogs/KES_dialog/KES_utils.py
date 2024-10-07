@@ -27,6 +27,6 @@ class TimeOutError(Exception):
 
 
 class TimeInError(Exception):
-    message = 'время приема должно быть меньше, чем время приема'
+    message = 'время приема должно быть меньше, чем время выбытия'
 
 

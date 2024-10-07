@@ -20,6 +20,10 @@ class ParamsWindow(Window):
         super().__init__(
             Format('{topic}'),
             keyboard,
+            SwitchTo(Const('рассчитать'),
+                     id='count',
+                     state=PatientSession.report_menu,
+                     when='count_flag'),
             SwitchTo(Const('<< назад'),
                      id='sw_back',
                      state=PatientSession.func_menu),

@@ -81,18 +81,19 @@ class BaseParameter:
 class DateTimeParameter(BaseParameter):
 
     def __post_init__(self):
-        self._datetime: Optional[datetime] = None
+        self.default_value = ''
+        self.datetime_: Optional[datetime] = None
 
     def __repr__(self):
         return f'DateTimeParameter({self.id}={self.default_value})'
 
     @property
     def value_like_datetime(self) -> datetime:
-        return self._datetime
+        return self.datetime_
 
     @value_like_datetime.setter
     def value_like_datetime(self, value: datetime) -> None:
-        self._datetime = value
+        self.datetime_ = value
 
 
 @dataclass

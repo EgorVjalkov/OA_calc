@@ -29,6 +29,10 @@ def time_calculator_menu() -> Window:
         Const('Выберите пункт меню'),
         Keyboard('simple_by_attr', 's_time', 'time_for_KES'
                  ).get_kb(KES_selected.on_chosen_kes_parameter),
+        SwitchTo(Const('рассчитать'),
+                 id='count',
+                 state=KES.report_menu,
+                 when='count_flag'),
         SwitchTo(Const('<< назад'),
                  id='sw_KES_menu',
                  state=KES.menu),

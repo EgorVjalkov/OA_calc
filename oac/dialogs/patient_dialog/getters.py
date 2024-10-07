@@ -18,7 +18,7 @@ async def get_funcs(dialog_manager: DialogManager,
     if not patient.is_results_empty:
         data['finish'] = 'печать результатов'
     else:
-        data['finish'] = 'никаких задач'
+        data['finish'] = 'спасибо, не надо'
     return data
 
 
@@ -32,7 +32,10 @@ async def get_data_for_params_menu(dialog_manager: DialogManager,
                                    **middleware_date) -> dict:
     patient = get_patient(dialog_manager)
     patient.set_current_params()
-    return {'patient_parameters': patient.params.get_btns(), 'topic': patient.topic}
+    data = {'patient_parameters': patient.params.get_btns(), 'topic': patient.topic, 'count_flag': False}
+    if patient.params.all_params_filled:
+        data['count_flag'] = True
+    return data
 
 
 async def get_topic_for_input(dialog_manager: DialogManager,
