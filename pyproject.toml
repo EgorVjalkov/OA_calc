@@ -17,6 +17,7 @@ pydantic-settings = "^2.5.2"
 
 [tool.poetry.scripts]
 oac_bot = "oac.bot_main:bot_run"
+test_bot = "oac.bot_main:test_run"
 
 
 [build-system]
