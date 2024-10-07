@@ -4,13 +4,13 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram_dialog import setup_dialogs
 
-from oac.My_token import TOKEN
+from oac.config_reader import TOKEN
 from oac.dialogs import start_commands
 from oac.dialogs.patient_dialog.windows import patient_dialog
 from oac.dialogs.KES_dialog.KES_windows import KES_dialog
 from oac.dialogs.misc_dialogs.misc_windows import feedback_dialog, theory_dialog
 
-#logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 
 async def main():

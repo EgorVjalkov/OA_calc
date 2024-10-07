@@ -3,12 +3,12 @@ from typing import Optional
 from aiogram import Bot
 from aiogram.types import CallbackQuery, Message
 from aiogram_dialog import DialogManager
-from aiogram_dialog.widgets.kbd import Select, Cancel, Button, SwitchTo
+from aiogram_dialog.widgets.kbd import Select, Button, SwitchTo
 from aiogram_dialog.widgets.input.text import TextInput
 from aiogram_dialog.api.exceptions import NoContextError
 from fastnumbers import isreal, fast_real
 
-from oac.My_token import TOKEN, ADMIN_ID
+from oac.config_reader import TOKEN
 from oac.dialogs.states import PatientSession
 from oac.dialogs.misc_dialogs.report_message import ReportMessage
 from oac.program_logic.patient import Patient
