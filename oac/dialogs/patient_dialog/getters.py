@@ -55,20 +55,23 @@ async def get_report(dialog_manager: DialogManager,
                      **middleware_date) -> dict:
     ctx = dialog_manager.current_context()
     patient = get_patient(dialog_manager)
+    data = {}
 
     match ctx.state, patient:
         case [State(state=PatientSession.report_menu), p]:
             p.change_func().get_result()
             # result = p.get_reports(last=True)
             # await dialog_manager.event.message.answer(result)
-            return {'result': patient.get_reports(last=True)}
+            data.update({'result': patient.get_reports(last=True)})
 
         case [State(state=PatientSession.print_finish_session_report),
               Patient(is_results_empty=True)]:
-            return {'result': 'Никаких задач, так никаких задач...'}
+            data.update({'result': 'Обращайтесь!'})
+            ctx.start_data.clear()
 
         case [State(state=PatientSession.print_finish_session_report),
               Patient(is_results_empty=False)]:
-            return {'result': patient.get_reports()}
+            data.update({'result': patient.get_reports()})
+            ctx.start_data.clear()
 
-    return {'result': 'не сработало'}
+    return data
