@@ -19,8 +19,6 @@ class Settings(BaseSettings):
     def get_admin_id(self):
         return self.admin_id.get_secret_value()
 
+
 config = Settings()
 mod = 'test'
-
-TOKEN = config.get_token(mod)
-ADMIN_ID = config.get_admin_id()

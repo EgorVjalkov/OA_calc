@@ -8,7 +8,7 @@ from aiogram_dialog.widgets.input.text import TextInput
 from aiogram_dialog.api.exceptions import NoContextError
 from fastnumbers import isreal, fast_real
 
-from oac.config_reader import TOKEN
+from oac.config_reader import config, mod
 from oac.dialogs.states import PatientSession
 from oac.dialogs.misc_dialogs.report_message import ReportMessage
 from oac.program_logic.patient import Patient
@@ -138,7 +138,7 @@ async def on_send_report_msg(c: CallbackQuery,
     if rep_msg:
         await rep_msg.edit(report)
     else:
-        bot = Bot(TOKEN)
+        bot = Bot(config.get_token(mod))
         user_id = c.from_user.id
         msg: Message = await dm.event.message.answer(report)
         await bot.pin_chat_message(c.from_user.id, msg.message_id)

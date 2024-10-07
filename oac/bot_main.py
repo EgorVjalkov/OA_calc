@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram_dialog import setup_dialogs
 
-from oac.config_reader import TOKEN
+from oac.config_reader import config, mod
 from oac.dialogs import start_commands
 from oac.dialogs.patient_dialog.windows import patient_dialog
 from oac.dialogs.KES_dialog.KES_windows import KES_dialog
@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 
 async def main():
     storage = MemoryStorage()
-    bot = Bot(TOKEN)
+    bot = Bot(config.get_token(mod))
     dp = Dispatcher(storage=storage)
     dp.include_router(start_commands.router)
     dp.include_router(patient_dialog)
