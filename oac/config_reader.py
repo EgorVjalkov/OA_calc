@@ -21,4 +21,4 @@ class Settings(BaseSettings):
 
 
 config = Settings()
-mod = 'test'
+mod = ''
