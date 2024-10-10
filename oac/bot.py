@@ -7,14 +7,14 @@ class MyBot:
         self.modification: Optional[str] = None
 
     @property
-    def mode(self):
+    def mode(self) -> str:
         return self.modification
 
     @mode.setter
     def mode(self, mod: str):
         self.modification = mod
 
-    def get_bot(self):
+    def get_bot(self) -> Bot:
         return Bot(config.get_token(self.mode))
 
 my_bot = MyBot()

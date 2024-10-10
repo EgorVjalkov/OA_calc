@@ -8,7 +8,7 @@ from aiogram_dialog.widgets.input.text import TextInput
 from aiogram_dialog.api.exceptions import NoContextError
 from fastnumbers import isreal, fast_real
 
-from oac.config_reader import config, mod
+from oac.config_reader import config
 from oac.dialogs.states import PatientSession
 from oac.dialogs.misc_dialogs.report_message import ReportMessage
 from oac.program_logic.patient import Patient
