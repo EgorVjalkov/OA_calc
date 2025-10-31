@@ -16,8 +16,8 @@ fastnumbers = "^5.1.0"
 pydantic-settings = "^2.5.2"
 
 [tool.poetry.scripts]
-oac_bot = "oac.bot_main:bot_run"
-test_bot = "oac.bot_main:test_run"
+bot = "bot_main:bot_run"
+test_bot = "bot_main:test_run"
 
 
 [build-system]
