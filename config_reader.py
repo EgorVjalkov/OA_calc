@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     bot_token: SecretStr
     admin_id: SecretStr
     model_config = SettingsConfigDict(
-        env_file='../.env', env_file_encoding='utf-8'
+        env_file='.env', env_file_encoding='utf-8'
     )
 
     def get_token(self, mode: str = '') -> str:

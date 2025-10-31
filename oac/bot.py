@@ -1,6 +1,6 @@
 from typing import Optional
 from aiogram import Bot
-from oac.config_reader import config
+from config_reader import config
 
 class MyBot:
     def __init__(self):

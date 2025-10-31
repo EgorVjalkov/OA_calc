@@ -3,7 +3,7 @@ from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.input.text import TextInput
 
 from oac.bot import my_bot
-from oac.config_reader import config
+from config_reader import config
 
 
 async def on_click(m: Message,

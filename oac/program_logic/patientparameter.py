@@ -172,7 +172,7 @@ def init_example_by_fields(cls, kwargs_dict) -> BaseParameter:
 def load_parameters() -> dict:
     params_dict = {}
     # path = 'parameters.xlsx'
-    path = 'program_logic/data/parameters.xlsx'
+    path = 'oac/program_logic/data/parameters.xlsx'
     param_df = pd.read_excel(path, sheet_name='parameters', dtype=str)
     comp_param_btns_df = pd.read_excel(path, sheet_name='parameter_menu', dtype=object)
     # filtered = param_df.func_id.map(lambda i: func_id in i)
