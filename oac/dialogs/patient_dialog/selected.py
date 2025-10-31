@@ -63,6 +63,7 @@ async def on_chosen_patient_parameter(c: CallbackQuery,
                                       item_id: str,
                                       **kwargs) -> None:
     patient = get_patient(dm)
+    print(patient)
     patient.params.parameter_id = item_id
     if patient.params.current.fill_by_text_input == 'True':
         await dm.switch_to(state=PatientSession.value_textinput)
