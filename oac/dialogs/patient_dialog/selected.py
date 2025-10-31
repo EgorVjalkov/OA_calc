@@ -142,7 +142,7 @@ async def on_send_report_msg(c: CallbackQuery,
     if rep_msg:
         await rep_msg.edit(report)
     else:
-        bot = Bot(config.get_token(mod))
+        bot = Bot(config.get_token())
         user_id = c.from_user.id
         msg: Message = await dm.event.message.answer(report)
         await bot.pin_chat_message(c.from_user.id, msg.message_id)

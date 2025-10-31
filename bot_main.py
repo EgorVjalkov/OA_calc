@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram_dialog import setup_dialogs
 
-from oac.bot import my_bot
+from config_reader import config
 from oac.dialogs import start_commands
 from oac.dialogs.patient_dialog.windows import patient_dialog
 from oac.dialogs.KES_dialog.KES_windows import KES_dialog
@@ -27,15 +27,9 @@ async def main(bot: Bot):
 
 
 def bot_run():
-    my_bot.mode = 'oac'
-    bot = my_bot.get_bot()
+    token = config.get_token()
+    bot = Bot(token)
     asyncio.run(main(bot))
-
-def test_run():
-    my_bot.mode = 'test'
-    bot = my_bot.get_bot()
-    asyncio.run(main(bot))
-
 
 if __name__ == '__main__':
-    test_run()
+    bot_run()
