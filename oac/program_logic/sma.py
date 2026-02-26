@@ -62,7 +62,7 @@ class SmaCounter:
 
         return bupivacaine_dosage[h][sum_of_risk+2]
 
-    def __call__(self, *args, **kwargs) -> str:
+    def calculate(self) -> str:
         dose_for_lying = self.get_anesthetic_dose(self.count_a_sum())
 
         hyperbaric = round(dose_for_lying+0.4, 1)
@@ -79,5 +79,5 @@ class SmaCounter:
 
 if __name__ == '__main__':
     sma = SmaCounter(60, 167, 0, -1, 1)
-    print(sma())
+    print(sma.calculate())
 

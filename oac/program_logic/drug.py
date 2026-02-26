@@ -1,15 +1,15 @@
 from typing import Optional
-import json
-from pathlib import Path
 from dataclasses import dataclass, InitVar
+
+from oac.program_logic.data_loader import data_loader
 
 from oac.program_logic.my_table import get_my_table_string
 from oac.program_logic.patientparameter import Limits
 
 
 @dataclass
-class BaseDrag:
-    drag: str
+class BaseDrug:
+    drug: str
     dose: str
     unit: str
 
@@ -23,7 +23,7 @@ class BaseDrag:
 
 
 @dataclass
-class DragInjection(BaseDrag):
+class DrugInjection(BaseDrug):
     flask_dose: str
     flask_unit: str
 
@@ -46,7 +46,7 @@ class DragInjection(BaseDrag):
         dose_in_str = f'{self.prepare_dose(self.get_patient_dose(weight))}{self.unit}'
         flasks = f'{self.get_patient_dose_in_flasks()} {self.flask_unit}'
         answer = {
-            'препарат': self.drag, 'расчет': dose_per_kg, 'доза': dose_in_str, 'ед': flasks
+            'препарат': self.drug, 'расчет': dose_per_kg, 'доза': dose_in_str, 'ед': flasks
         }
         return answer
 
@@ -57,9 +57,9 @@ coef_dict = {
 
 
 @dataclass
-class DragInfusion(BaseDrag):
+class DrugInfusion(BaseDrug):
     concentration: str
-    drag_id: str
+    drug_id: str
 
     def __post_init__(self):
         super().__post_init__()
@@ -81,7 +81,7 @@ class DragInfusion(BaseDrag):
         for flasks in range(1, 20):
             speed = self.get_infusion_speed(weight, flasks, finish_vol)
             if speed in optimal_infusion_speed:
-                return f'{flasks} ml {self.drag} to {finish_vol} ml, {speed} ml/h'
+                return f'{flasks} ml {self.drug} to {finish_vol} ml, {speed} ml/h'
 
 
 @dataclass
@@ -90,20 +90,17 @@ class PerWeightCounter:
     weight: int
 
     def load_frame(self) -> list[dict]:
-        path = Path(__file__).parent / 'data' / 'drag_dosage.json'
-        with open(path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        return data.get(self.func_id, [])
+        return data_loader.drug_dosage_data.get(self.func_id, [])
 
-    def __call__(self, *args, **kwargs) -> str:
-        drag_list_data = self.load_frame()
+    def calculate(self) -> str:
+        drug_list_data = self.load_frame()
 
-        drag_list = [DragInjection(**drag_row).count(self.weight)
-                     for drag_row in drag_list_data]
+        drug_list = [DrugInjection(**drug_row).count(self.weight)
+                     for drug_row in drug_list_data]
 
         my_table = get_my_table_string(
             fields=['препарат', 'расчет', 'доза', 'ед'],
-            rows=drag_list,
+            rows=drug_list,
             divider=' | '
         )
         return my_table
@@ -111,22 +108,22 @@ class PerWeightCounter:
 
 @dataclass
 class PerWeighTimeCounter(PerWeightCounter):
-    drag_id: str
+    drug_id: str
     finish_volume: int
 
-    def __call__(self, *args, **kwargs) -> str:
-        drag_list_data = self.load_frame()
+    def calculate(self) -> str:
+        drug_list_data = self.load_frame()
 
-        drag_data = next(item for item in drag_list_data if item.get('drag_id') == self.drag_id)
-        drag_inf = DragInfusion(**drag_data)
-        return drag_inf.get_optimal_flasks_num(self.weight, self.finish_volume)
+        drug_data = next(item for item in drug_list_data if item.get('drug_id') == self.drug_id)
+        drug_inf = DrugInfusion(**drug_data)
+        return drug_inf.get_optimal_flasks_num(self.weight, self.finish_volume)
 
 
 if __name__ == '__main__':
-    # drag = BaseDrag('na', '10')
-    # drag = DragInjection('nor', '10', 'mg', '500', 'fl')
-    drag = DragInfusion('nor', '0.3', 'mkg', '2', 'n_id')
-    report = drag.get_optimal_flasks_num(50, 50)
+    # drug = BaseDrug('na', '10')
+    # drug = DrugInjection('nor', '10', 'mg', '500', 'fl')
+    drug = DrugInfusion('nor', '0.3', 'mkg', '2', 'n_id')
+    report = drug.get_optimal_flasks_num(50, 50)
     func = PerWeighTimeCounter('per_hour_count', 70, 'd_na', 50)
-    print(func())
+    print(func.calculate())
 

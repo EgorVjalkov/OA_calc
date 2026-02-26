@@ -42,8 +42,8 @@ class SofaCounter(BaseScale):
                 oxy_ser = self.get_score_scale(oxy_dict[i])
 
         for score, cell_data in oxy_ser.items():
-            limits = Limits(
-                *[fast_real(e) for e in cell_data.split()])
+            l_list = [fast_real(e) for e in cell_data.split()]
+            limits = Limits(min=l_list[0], max=l_list[1] if len(l_list) > 1 else None)
             if self.oxygenation_index in limits:
                 return ScaleParam(f'pao2/fio2 ({self.respiration.value})',
                                   f'{self.oxygenation_index}',
@@ -66,5 +66,5 @@ class SofaCounter(BaseScale):
         scores['excretion'] = self.get_excretion_score()
         return scores
 
-    def __call__(self, *args, **kwargs):
-        return BaseScale.__call__(self, self.get_sofa_scores)
+    def calculate(self):
+        return super().calculate(self.get_sofa_scores)

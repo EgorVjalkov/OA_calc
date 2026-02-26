@@ -1,7 +1,7 @@
 {
   "parameters": {
     "height": {
-      "func_ids": "blood_vol_count, sma_count, bleed_%_count",
+      "func_ids": "blood_vol_count, sma_count, bleed_percent_count",
       "btn_text": "рост",
       "btn_text_filled": "рост: {}см",
       "fill_by_text_input": "True",
@@ -11,7 +11,7 @@
       "after_dot": 0.0
     },
     "weight": {
-      "func_ids": "drag_count, blood_vol_count, sma_count, bleed_%_count",
+      "func_ids": "drug_count, blood_vol_count, sma_count, bleed_percent_count",
       "btn_text": "вес",
       "btn_text_filled": "вес: {}кг",
       "fill_by_text_input": "True",
@@ -21,7 +21,7 @@
       "after_dot": 0.0
     },
     "weight_before": {
-      "func_ids": "blood_vol_count, bleed_%_count",
+      "func_ids": "blood_vol_count, bleed_percent_count",
       "btn_text": "вес до беременности",
       "btn_text_filled": "вес до беременности: {}кг",
       "fill_by_text_input": "True",
@@ -31,7 +31,7 @@
       "after_dot": 0.0
     },
     "bleed_vol": {
-      "func_ids": "bleed_%_count",
+      "func_ids": "bleed_percent_count",
       "btn_text": "объем кровопотери",
       "btn_text_filled": "объем кровопотери: {}мл",
       "fill_by_text_input": "True",

@@ -29,7 +29,7 @@ class BloodVolCounter:
         vol_list = [str(get_bleed_vol(percent)) for percent in percents]
         return vol_list
 
-    def __call__(self, *args, **kwargs):
+    def calculate(self):
         clin_ = '-'.join(self.count_bleed_volume((10, 15)))
         crit_ = '-'.join(self.count_bleed_volume((25, 30)))
         rows = [
@@ -47,7 +47,7 @@ class BleedCounter(BloodVolCounter):
     def count_a_percent(self):
         return int(self.bleed_vol / self.blood_volume * 100)
 
-    def __call__(self, *args, **kwargs):
+    def calculate(self):
         percent = self.count_a_percent()
         rows = [
             ['Oбъем ОЦК', f'~ {self.blood_volume}мл'],
@@ -59,5 +59,5 @@ class BleedCounter(BloodVolCounter):
 if __name__ == '__main__':
     data = {'weight': 56, 'height': 146, 'weight_before': 52, 'bleed_vol': 1000}
     a = BleedCounter(**data)
-    rep = a()
+    rep = a.calculate()
     print(rep)

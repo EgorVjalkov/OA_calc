@@ -1,19 +1,14 @@
-import dataclasses
-from dataclasses import dataclass, InitVar
-from typing import Optional, Dict, Union
+from typing import Optional, Dict, Union, Any
 from collections import namedtuple
 from datetime import datetime
 from fastnumbers import fast_real
+from pydantic import BaseModel, Field, model_validator
 
-import json
-from pathlib import Path
-
-
+from oac.program_logic.data_loader import data_loader
 Btn = namedtuple('Btn', 'text id')
 
 
-@dataclass
-class Limits:
+class Limits(BaseModel):
     min: int | float
     max: Optional[int | float | str] = None
 
@@ -33,26 +28,24 @@ class Limits:
         return self.min <= item <= self.max
 
 
-@dataclass
-class CompParamMenuBtn:
+class CompParamMenuBtn(BaseModel):
     id: str
     btn: str
     text_if_filled: str
-    data: str
+    data: Union[str, int]
 
     def make_button(self):
         return Btn(self.btn, self.id)
 
 
-@dataclass
-class BaseParameter:
+class BaseParameter(BaseModel):
     id: str
     func_ids: str
     btn_text: str
     btn_text_filled: str
     fill_by_text_input: str
-    _topic: str
-    default_value: str
+    topic_data: str = Field(alias='_topic')
+    default_value: Any
 
     def __repr__(self):
         return f'BaseParameter({self.id}={self.default_value})'
@@ -67,7 +60,7 @@ class BaseParameter:
 
     @property
     def topic(self):
-        return self._topic
+        return self.topic_data
 
     @property
     def button_text(self):
@@ -78,12 +71,9 @@ class BaseParameter:
             return self.btn_text_filled.format(self.value)
 
 
-@dataclass
 class DateTimeParameter(BaseParameter):
-
-    def __post_init__(self):
-        self.default_value = ''
-        self.datetime_: Optional[datetime] = None
+    default_value: Any = ''
+    datetime_: Optional[datetime] = None
 
     def __repr__(self):
         return f'DateTimeParameter({self.id}={self.default_value})'
@@ -97,7 +87,6 @@ class DateTimeParameter(BaseParameter):
         self.datetime_ = value
 
 
-@dataclass
 class SelectedParameter(BaseParameter):
     variants: Optional[Dict[str, CompParamMenuBtn]] = None
 
@@ -120,15 +109,17 @@ class SelectedParameter(BaseParameter):
         return [i.make_button() for i in self.variants.values()]
 
 
-@dataclass
 class NumericParameter(BaseParameter):
+    ndigits: int = 0
 
-    def __post_init__(self):
+    @model_validator(mode='after')
+    def set_ndigits(self):
         val_str = str(self.default_value)
         if len(val_str) > 1:
             self.ndigits = len(val_str.replace('0.', ''))
         else:
             self.ndigits = 0
+        return self
 
     def __repr__(self):
         return f'NumericParameter({self.id}={self.default_value})'
@@ -142,39 +133,33 @@ class NumericParameter(BaseParameter):
         self.default_value = round(new_value, self.ndigits)
 
 
-@dataclass
 class LimitedParameter(NumericParameter):
-    limits: str
+    limits_str: str = Field(alias='limits')
+    parsed_limits: Optional[Limits] = None
 
-    def __post_init__(self):
-        super().__post_init__()
-        match self.limits:
-            case limit_str if '.' in limit_str:
-                l_list = [float(i) for i in limit_str.split(' ')]
-
-            case limit_str:
-                l_list = [int(i) for i in limit_str.split()]
-
-        self.limits: Limits = Limits(*l_list)
+    @model_validator(mode='after')
+    def parse_limits(self):
+        if '.' in self.limits_str:
+            l_list = [float(i) for i in self.limits_str.split(' ')]
+        else:
+            l_list = [int(i) for i in self.limits_str.split()]
+        self.parsed_limits = Limits(min=l_list[0], max=l_list[1] if len(l_list) > 1 else None)
+        return self
 
     def __repr__(self):
         return f'LimitedParameter({self.id}={self.default_value})'
 
     @property
     def topic(self):
-        return f'{self._topic}. Допустимые значения в интервале от {self.limits.min} до {self.limits.max}.'
-
+        return f'{self.topic_data}. Допустимые значения в интервале от {self.parsed_limits.min} до {self.parsed_limits.max}.'
 
 def init_example_by_fields(cls, kwargs_dict) -> BaseParameter:
-    cls_fields = [i.name for i in dataclasses.fields(cls)]
-    return cls(*[kwargs_dict.get(i) for i in cls_fields])
+    return cls(**kwargs_dict)
 
 
 def load_parameters() -> dict:
     params_dict = {}
-    path = Path(__file__).parent / 'data' / 'parameters.json'
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+    data = data_loader.parameters_data
         
     param_dict_data = data.get('parameters', {})
     comp_param_btns_data = data.get('parameter_menu', {})

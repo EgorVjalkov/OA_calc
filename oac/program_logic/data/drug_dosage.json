@@ -1,56 +1,56 @@
 {
-  "drag_count": [
+  "drug_count": [
     {
-      "drag": "инфузия",
+      "drug": "инфузия",
       "dose": 30.0,
       "unit": "мл",
       "flask_dose": 500.0,
       "flask_unit": "фл"
     },
     {
-      "drag": "транексам",
+      "drug": "транексам",
       "dose": 15.0,
       "unit": "мг",
       "flask_dose": 250.0,
       "flask_unit": "амп"
     },
     {
-      "drag": "транексам",
+      "drug": "транексам",
       "dose": 40.0,
       "unit": "мг",
       "flask_dose": 250.0,
       "flask_unit": "амп"
     },
     {
-      "drag": "КПК 500",
+      "drug": "КПК 500",
       "dose": 15.0,
       "unit": "ед",
       "flask_dose": 500.0,
       "flask_unit": "фл"
     },
     {
-      "drag": "КПК 600",
+      "drug": "КПК 600",
       "dose": 15.0,
       "unit": "ед",
       "flask_dose": 600.0,
       "flask_unit": "фл"
     },
     {
-      "drag": "КОАГИЛ",
+      "drug": "КОАГИЛ",
       "dose": 0.09,
       "unit": "мг",
       "flask_dose": 4.8,
       "flask_unit": "фл"
     },
     {
-      "drag": "СЗП",
+      "drug": "СЗП",
       "dose": 15.0,
       "unit": "мл",
       "flask_dose": 300.0,
       "flask_unit": "пак"
     },
     {
-      "drag": "КПцп",
+      "drug": "КПцп",
       "dose": 3.0,
       "unit": "мл",
       "flask_dose": 30.0,
@@ -59,16 +59,16 @@
   ],
   "per_hour_count": [
     {
-      "drag_id": "d_na",
-      "drag": "норадреналин",
+      "drug_id": "d_na",
+      "drug": "норадреналин",
       "dose": 0.3,
       "unit": "mkg",
       "concentration": 2
     }
   ],
-  "drag_min_menu": [
+  "drug_min_menu": [
     {
-      "id": "drag_id",
+      "id": "drug_id",
       "text": "препарат",
       "text_if_filled": "препарат: {}",
       "default": "d_na",

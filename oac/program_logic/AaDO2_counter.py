@@ -24,7 +24,7 @@ class AaDO2Counter:
     def get_aado2(self) -> float:
         return round((self.fio2*delta_p - self.paco2/0.8) - self.pao2, 1)
 
-    def __call__(self, mode='', *args, **kwargs) -> float | str:
+    def calculate(self, mode='') -> float | str:
         real_aado2 = self.get_aado2()
         print(real_aado2)
 

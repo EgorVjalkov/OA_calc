@@ -37,8 +37,8 @@ dummy_data = {
 
 funcs = [
     'blood_vol_count', 
-    'bleed_%_count', 
-    'drag_count', 
+    'bleed_percent_count', 
+    'drug_count', 
     'sma_count', 
     'sofa_count', 
     'apacheII_count', 

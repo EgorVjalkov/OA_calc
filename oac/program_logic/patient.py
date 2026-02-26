@@ -4,7 +4,7 @@ from collections import defaultdict
 from oac.dialogs.variants_with_id import topics
 from oac.program_logic.parameters import ParametersForCurrentFunc
 from oac.program_logic.blood_counter import BloodVolCounter, BleedCounter
-from oac.program_logic.drag import PerWeightCounter
+from oac.program_logic.drug import PerWeightCounter
 from oac.program_logic.sma import SmaCounter
 from oac.program_logic.sofa_counter import SofaCounter
 from oac.program_logic.apacheII_counter import ApacheIIBase, ApacheIICounterFio2Less50, ApacheIICounter
@@ -54,9 +54,9 @@ class Patient:
         match self.func_id:
             case 'blood_vol_count':
                 self.func = BloodVolCounter(**self.params.get_values())
-            case 'bleed_%_count':
+            case 'bleed_percent_count':
                 self.func = BleedCounter(**self.params.get_values())
-            case 'drag_count':
+            case 'drug_count':
                 self.func = PerWeightCounter(self.func_id, **self.params.get_values())
             case 'sma_count':
                 self.func = SmaCounter(**self.params.get_values())
@@ -70,7 +70,7 @@ class Patient:
         return self
 
     def get_result(self) -> list:
-        result = self.func()
+        result = self.func.calculate()
         params = self.params.extract()
         self.results[self.func_id].update({
             'parameters': params,

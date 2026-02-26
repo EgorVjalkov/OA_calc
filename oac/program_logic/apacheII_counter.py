@@ -58,8 +58,8 @@ class ApacheIIBase(BaseScale):
 
         return scores
 
-    def __call__(self, *args, **kwargs):
-        return BaseScale.__call__(self, get_scores=self.get_apacheII_scores)
+    def calculate(self):
+        return super().calculate(get_scores=self.get_apacheII_scores)
 
 
 @dataclass
@@ -81,4 +81,4 @@ class ApacheIICounter(ApacheIICounterFio2Less50):
         super().__post_init__(glasgow, chronic_data, operation_data)
         #print([self.age, fio2, pao2, paco2, self.body_temp])
         args = [p.value for p in [self.age, fio2, pao2, paco2, self.body_temp]]
-        self.aado2 = ShortParam('AaDO2', AaDO2Counter(*args).__call__())
+        self.aado2 = ShortParam('AaDO2', AaDO2Counter(*args).calculate())

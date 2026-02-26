@@ -5,6 +5,8 @@ from fastnumbers import fast_real, fast_int
 from collections import namedtuple
 from pathlib import Path
 
+from oac.program_logic.data_loader import data_loader
+
 from oac.program_logic.patientparameter import Limits
 from oac.program_logic.parameters import ShortParam
 from oac.program_logic.my_table import get_my_table_string
@@ -32,9 +34,7 @@ class BaseScale:
         self.total_score: Optional[ShortParam] = None
 
     def get_scale_frame(self, scale_name: str):
-        path = Path(__file__).parent / 'data' / 'scales.json'
-        with open(path, 'r', encoding='utf-8') as f:
-            full_data = json.load(f)
+        full_data = data_loader.scales_data
             
         self.data = full_data[f"{scale_name}_count"]
         self.lethality_frame = full_data[f"{scale_name}_lethal"]
@@ -49,7 +49,7 @@ class BaseScale:
         return {k: v for k, v in indicator_dict.items() if v is not None}
 
     def get_score(self, indicator_name: str) -> ScaleParam:
-        param: ShortParam = self.__dict__[indicator_name]
+        param: ShortParam = getattr(self, indicator_name)
         score_scale = self.get_score_scale(indicator_name)
 
         for score, cell_data in score_scale.items():
@@ -59,8 +59,8 @@ class BaseScale:
                     return ScaleParam(param.name, param.value, score)
 
             else:
-                limits = Limits(
-                    *[fast_real(e) for e in cell_data.split()])
+                l_list = [fast_real(e) for e in cell_data.split()]
+                limits = Limits(min=l_list[0], max=l_list[1] if len(l_list) > 1 else None)
                 if param.value in limits:
                     return ScaleParam(param.name, param.value, score)
 
@@ -83,7 +83,7 @@ class BaseScale:
     def get_lethality(self):
         return self.get_score('total_score')
 
-    def __call__(self, get_scores: Callable, *args, **kwargs):
+    def calculate(self, get_scores: Callable):
         scores: dict = get_scores()
         self.get_total_score(scores)
         lethal = self.get_lethality()
