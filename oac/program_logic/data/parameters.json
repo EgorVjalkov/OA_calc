@@ -1,0 +1,448 @@
+{
+  "parameters": {
+    "height": {
+      "func_ids": "blood_vol_count, sma_count, bleed_%_count",
+      "btn_text": "рост",
+      "btn_text_filled": "рост: {}см",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель роста в см",
+      "default_value": 0,
+      "limits": "140 200",
+      "after_dot": 0.0
+    },
+    "weight": {
+      "func_ids": "drag_count, blood_vol_count, sma_count, bleed_%_count",
+      "btn_text": "вес",
+      "btn_text_filled": "вес: {}кг",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель веса в кг",
+      "default_value": 0,
+      "limits": "40 160",
+      "after_dot": 0.0
+    },
+    "weight_before": {
+      "func_ids": "blood_vol_count, bleed_%_count",
+      "btn_text": "вес до беременности",
+      "btn_text_filled": "вес до беременности: {}кг",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель веса до беременности в кг",
+      "default_value": 0,
+      "limits": "40 160",
+      "after_dot": 0.0
+    },
+    "bleed_vol": {
+      "func_ids": "bleed_%_count",
+      "btn_text": "объем кровопотери",
+      "btn_text_filled": "объем кровопотери: {}мл",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры объем кровопотери в мл",
+      "default_value": 0,
+      "limits": "no limits",
+      "after_dot": 0.0
+    },
+    "fetus": {
+      "func_ids": "sma_count",
+      "btn_text": "вес плода",
+      "btn_text_filled": "вес плода {}кг",
+      "fill_by_text_input": "False",
+      "_topic": "Оценка веса плода. Выберите вариант",
+      "default_value": "normal_f",
+      "limits": null,
+      "after_dot": null
+    },
+    "bladder": {
+      "func_ids": "sma_count",
+      "btn_text": "плодный пузырь",
+      "btn_text_filled": "плодный пузырь: {}",
+      "fill_by_text_input": "False",
+      "_topic": "Оценка объема амниотической жидкости. Выберите вариант",
+      "default_value": "normal_b",
+      "limits": null,
+      "after_dot": null
+    },
+    "discomfort": {
+      "func_ids": "sma_count",
+      "btn_text": "дискомфорт в положении на спине",
+      "btn_text_filled": "дискомфорт в положении на спине: {}",
+      "fill_by_text_input": "False",
+      "_topic": "Предъявляет ли пациентка жалобы на потемнение в глазах, одышку, головокружение в положении лежа на спине?",
+      "default_value": "no_discomfort",
+      "limits": null,
+      "after_dot": null
+    },
+    "time_in": {
+      "func_ids": "kes_time_count",
+      "btn_text": "время поступления",
+      "btn_text_filled": "время поступления: {}",
+      "fill_by_text_input": "datetime",
+      "_topic": "ПОСТУПЛЕНИЕ: \nотправьте сообщение в формате “дд.мм.гг чч:мм”",
+      "default_value": 0,
+      "limits": "no limits",
+      "after_dot": null
+    },
+    "time_out": {
+      "func_ids": "kes_time_count",
+      "btn_text": "время перевода",
+      "btn_text_filled": "время перевода: {}",
+      "fill_by_text_input": "datetime",
+      "_topic": "ПЕРЕВОД: \nотправьте сообщение в формате “дд.мм.гг чч:мм”",
+      "default_value": 0,
+      "limits": "no limits",
+      "after_dot": null
+    },
+    "fio2": {
+      "func_ids": "sofa_count, apacheII_count",
+      "btn_text": "FiO2",
+      "btn_text_filled": "FiO2: {}",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель FiO2 в долях от единицы",
+      "default_value": "0.00",
+      "limits": "0.21 1.0",
+      "after_dot": 2.0
+    },
+    "pao2": {
+      "func_ids": "sofa_count, apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "PaO2",
+      "btn_text_filled": "PaO2: {}мм. рт. ст",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель PaO2 в мм.рт.ст. ",
+      "default_value": 0,
+      "limits": "no limits",
+      "after_dot": 0.0
+    },
+    "resp_support": {
+      "func_ids": "sofa_count",
+      "btn_text": "респераторная поддержка",
+      "btn_text_filled": "респераторная поддержка: {}",
+      "fill_by_text_input": "False",
+      "_topic": "Респераторная поддержка?",
+      "default_value": "normal_resp",
+      "limits": null,
+      "after_dot": null
+    },
+    "plt": {
+      "func_ids": "sofa_count",
+      "btn_text": "тромбоциты",
+      "btn_text_filled": "тромбоциты: {}*10^9/л",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель тромбоцитов",
+      "default_value": 0,
+      "limits": "no limits",
+      "after_dot": 0.0
+    },
+    "bili": {
+      "func_ids": "sofa_count",
+      "btn_text": "билирубин",
+      "btn_text_filled": "билирубин: {}мкмоль/л",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель билирубина в мкмоль/л",
+      "default_value": 0,
+      "limits": "no limits",
+      "after_dot": 0.0
+    },
+    "hypotension": {
+      "func_ids": "sofa_count",
+      "btn_text": "гипотензия",
+      "btn_text_filled": "гипотензия: {}",
+      "fill_by_text_input": "False",
+      "_topic": "Оценка гемодинамики. Выберите вариант. \nСокращения: Д - допамин, ДБ - добутамин, НА - норадреналин, А - адреналин. \nВсе дозы в мкг/кг/мин",
+      "default_value": "normal_hd",
+      "limits": null,
+      "after_dot": null
+    },
+    "glasgow": {
+      "func_ids": "sofa_count, apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "ШКГ",
+      "btn_text_filled": "ШКГ: {} б.",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель ШКГ в баллах",
+      "default_value": 0,
+      "limits": "3 15",
+      "after_dot": 0.0
+    },
+    "crea": {
+      "func_ids": "sofa_count, apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "креатинин",
+      "btn_text_filled": "креатинин: {}мкмоль/л",
+      "fill_by_text_input": "True",
+      "_topic": "Ввведите с клавиатуры показатель креатинина в мкмоль/л",
+      "default_value": 0,
+      "limits": "no limits",
+      "after_dot": 0.0
+    },
+    "diuresis": {
+      "func_ids": "sofa_count",
+      "btn_text": "диурез",
+      "btn_text_filled": "диурез: {}мл/сут",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель суточного диуреза в мл",
+      "default_value": 0,
+      "limits": "no limits",
+      "after_dot": 0.0
+    },
+    "age": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "возраст",
+      "btn_text_filled": "возраст: {}",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры возраст пациента?",
+      "default_value": 0,
+      "limits": "no limits",
+      "after_dot": 0.0
+    },
+    "body_temp": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "рект. температура",
+      "btn_text_filled": "рект. температура: {} C",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель ректальной температуры в градусах Цельсия",
+      "default_value": "0.0",
+      "limits": "no limits",
+      "after_dot": 1.0
+    },
+    "mean_pressure": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "ср. АД",
+      "btn_text_filled": "ср. АД: {} мм. рт. ст",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель среднего АД",
+      "default_value": 0,
+      "limits": "no limits",
+      "after_dot": 0.0
+    },
+    "heart_rate": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "ЧСС",
+      "btn_text_filled": "ЧСС: {} в мин.",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель ЧСС",
+      "default_value": 0,
+      "limits": "30 200",
+      "after_dot": 0.0
+    },
+    "breath_rate": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "ЧДД",
+      "btn_text_filled": "ЧДД: {} в мин.",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель ЧДД",
+      "default_value": 0,
+      "limits": " 0 40",
+      "after_dot": 0.0
+    },
+    "paco2": {
+      "func_ids": "apacheII_count",
+      "btn_text": "PaCO2",
+      "btn_text_filled": "PaCO2: {}мм. рт. ст.",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель PaCO2 в мм.рт.ст. ",
+      "default_value": "0",
+      "limits": "no limits",
+      "after_dot": 0.0
+    },
+    "pH": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "pHa",
+      "btn_text_filled": "pHa: {}",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель pH артериальной крови, округлив, если нужно, до сотых",
+      "default_value": "0.00",
+      "limits": "no limits",
+      "after_dot": 2.0
+    },
+    "Na": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "натрий",
+      "btn_text_filled": "натрий: {}ммоль/л",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель натрия сыворотки крови в ммоль/л",
+      "default_value": "0",
+      "limits": "no limits",
+      "after_dot": 0.0
+    },
+    "K": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "калий",
+      "btn_text_filled": "калий: {}ммоль/л",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель калия сыворотки крови в ммоль/л, округлив до десятых",
+      "default_value": "0.0",
+      "limits": "no limits",
+      "after_dot": 1.0
+    },
+    "Hct": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "гемотокрит",
+      "btn_text_filled": "гемотокрит: {}",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель HCT в долях от единицы, округлив до сотых",
+      "default_value": "0.00",
+      "limits": "no limits",
+      "after_dot": 2.0
+    },
+    "WBC": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "лейкоциты",
+      "btn_text_filled": "лейкоциты: {}*10^9/л",
+      "fill_by_text_input": "True",
+      "_topic": "Введите с клавиатуры показатель лейкоцитов, округлив до десятых",
+      "default_value": "0.0",
+      "limits": "no limits",
+      "after_dot": 1.0
+    },
+    "chronic": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "тяжелая сопут. патология",
+      "btn_text_filled": "тяж. сопут. патология: {}",
+      "fill_by_text_input": "False",
+      "_topic": "Выберите ДА, если у пациента имеется тяжелое хроническое заболевание хотя бы одной из систем органов.\n- печень (тяжелая портальная гипертензия, печеночно-клеточная недостаточность)\n- сердечно-сосуд. система (СН 4ФК по NYHA, стенокардия покоя)\n- дыхательная система (ДН 3 ст)\n- почки (ХБП, требующая диализа)\n- иммунная система (иммуносупрессия вследствие курсов лучевой, химеотерапии, пульс-терапии ГКС, длительного приема ГКС и/или заболевания, снижающие резистентность к инфекциям (ВИЧ, лейкоз))",
+      "default_value": "no_chronic",
+      "limits": null,
+      "after_dot": null
+    },
+    "operation": {
+      "func_ids": "apacheIIFio2less50_count,  apacheII_count",
+      "btn_text": "операция",
+      "btn_text_filled": "операция: {}",
+      "fill_by_text_input": "False",
+      "_topic": "Пациент поле оперативного вмешательства?",
+      "default_value": "no_oper",
+      "limits": null,
+      "after_dot": null
+    }
+  },
+  "parameter_menu": {
+    "big_f": {
+      "parameter_id": "fetus",
+      "btn": "вес плода > 4кг",
+      "text_if_filled": "> 4",
+      "data": 1
+    },
+    "normal_f": {
+      "parameter_id": "fetus",
+      "btn": "2.5кг < вес плода < 4кг",
+      "text_if_filled": "от 2.5 до 4",
+      "data": 0
+    },
+    "small_f": {
+      "parameter_id": "fetus",
+      "btn": "вес плода < 2.5 кг",
+      "text_if_filled": "< 2.5",
+      "data": -1
+    },
+    "poly_b": {
+      "parameter_id": "bladder",
+      "btn": "многоводие",
+      "text_if_filled": "многоводие",
+      "data": 1
+    },
+    "normal_b": {
+      "parameter_id": "bladder",
+      "btn": "нормальный объем",
+      "text_if_filled": "норма",
+      "data": 0
+    },
+    "oligo_b": {
+      "parameter_id": "bladder",
+      "btn": "маловодие",
+      "text_if_filled": "маловодие",
+      "data": -1
+    },
+    "discomfort": {
+      "parameter_id": "discomfort",
+      "btn": "да",
+      "text_if_filled": "да",
+      "data": 1
+    },
+    "no_discomfort": {
+      "parameter_id": "discomfort",
+      "btn": "нет",
+      "text_if_filled": "нет",
+      "data": 0
+    },
+    "normal_hd": {
+      "parameter_id": "hypotension",
+      "btn": "АДср. >= 70 мм.рт.ст",
+      "text_if_filled": "нет",
+      "data": "нет"
+    },
+    "low_hp": {
+      "parameter_id": "hypotension",
+      "btn": "АДср. < 70 мм.рт.ст",
+      "text_if_filled": "без ВП",
+      "data": "без ВП"
+    },
+    "mid_hp": {
+      "parameter_id": "hypotension",
+      "btn": "Д < 5 или ДБ любая доза",
+      "text_if_filled": "низкие дозы ВП",
+      "data": "низкие дозы ВП"
+    },
+    "hard_hp": {
+      "parameter_id": "hypotension",
+      "btn": "НА (А) < 0,1 или Д 5 - 15",
+      "text_if_filled": "средние дозы ВП",
+      "data": "средние дозы ВП"
+    },
+    "critical_hp": {
+      "parameter_id": "hypotension",
+      "btn": "НА (А) >= 0,1 или Д > 15 ",
+      "text_if_filled": "высокие дозы ВП",
+      "data": "высокие дозы ВП"
+    },
+    "normal_resp": {
+      "parameter_id": "resp_support",
+      "btn": "не требуется",
+      "text_if_filled": "не требуется",
+      "data": "без поддержки"
+    },
+    "o2_resp": {
+      "parameter_id": "resp_support",
+      "btn": "инсуфляция О2",
+      "text_if_filled": "увл. О2",
+      "data": "увл. О2"
+    },
+    "nivl_resp": {
+      "parameter_id": "resp_support",
+      "btn": "неинвазианая ИВЛ",
+      "text_if_filled": "НИВЛ",
+      "data": "НИВЛ"
+    },
+    "ivl_resp": {
+      "parameter_id": "resp_support",
+      "btn": "инвазивная ИВЛ",
+      "text_if_filled": "ИВЛ",
+      "data": "ИВЛ"
+    },
+    "no_chronic": {
+      "parameter_id": "chronic",
+      "btn": "нет",
+      "text_if_filled": "нет",
+      "data": "no_chronic"
+    },
+    "chronic": {
+      "parameter_id": "chronic",
+      "btn": "да",
+      "text_if_filled": "да",
+      "data": "chronic"
+    },
+    "no_oper": {
+      "parameter_id": "operation",
+      "btn": "нет",
+      "text_if_filled": "нет",
+      "data": "no_oper"
+    },
+    "elect": {
+      "parameter_id": "operation",
+      "btn": "плановая",
+      "text_if_filled": "плановая",
+      "data": "elect"
+    },
+    "emerg": {
+      "parameter_id": "operation",
+      "btn": "экстренная",
+      "text_if_filled": "экстренная",
+      "data": "emerg"
+    }
+  }
+}

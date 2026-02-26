@@ -1,6 +1,5 @@
 from typing import Iterable
 
-import pandas as pd
 from  prettytable import PrettyTable
 
 

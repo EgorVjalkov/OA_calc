@@ -5,7 +5,8 @@ from collections import namedtuple
 from datetime import datetime
 from fastnumbers import fast_real
 
-import pandas as pd
+import json
+from pathlib import Path
 
 
 Btn = namedtuple('Btn', 'text id')
@@ -171,19 +172,15 @@ def init_example_by_fields(cls, kwargs_dict) -> BaseParameter:
 
 def load_parameters() -> dict:
     params_dict = {}
-    # path = 'parameters.xlsx'
-    path = 'oac/program_logic/data/parameters.xlsx'
-    param_df = pd.read_excel(path, sheet_name='parameters', dtype=str)
-    comp_param_btns_df = pd.read_excel(path, sheet_name='parameter_menu', dtype=object)
-    # filtered = param_df.func_id.map(lambda i: func_id in i)
-    # param_df = param_df[filtered == True]
-    # del param_df['func_id']
+    path = Path(__file__).parent / 'data' / 'parameters.json'
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+        
+    param_dict_data = data.get('parameters', {})
+    comp_param_btns_data = data.get('parameter_menu', {})
 
-    for param_row in param_df.index:
+    for param_id, row_dict in param_dict_data.items():
         parameter = None
-        row_dict = param_df.loc[param_row].to_dict()
-        #print(row_dict['id'], row_dict['fill_by_text_input'], row_dict['limits'])
-        #print(type(row_dict['default_value']))
 
         match row_dict:
             case {'fill_by_text_input': 'True', 'limits': 'no limits'}:
@@ -196,10 +193,9 @@ def load_parameters() -> dict:
                 parameter = init_example_by_fields(DateTimeParameter, row_dict)
 
             case {'fill_by_text_input': 'False'}:
-                variants = comp_param_btns_df[comp_param_btns_df.parameter_id == row_dict['id']]
-                variants = [init_example_by_fields(CompParamMenuBtn, variants.loc[i].to_dict())
-                            for i in variants.index]
-                #variants = [CompParamMenuBtn(**variants.loc[i].to_dict()) for i in variants.index]
+                variants = [init_example_by_fields(CompParamMenuBtn, v) 
+                            for k, v in comp_param_btns_data.items() 
+                            if v.get('parameter_id') == row_dict['id']]
                 row_dict.update({'variants': {i.id: i for i in variants}})
                 parameter = init_example_by_fields(SelectedParameter, row_dict)
             case _:

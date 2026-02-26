@@ -1,0 +1,99 @@
+{
+  "drag_count": [
+    {
+      "drag": "инфузия",
+      "dose": 30.0,
+      "unit": "мл",
+      "flask_dose": 500.0,
+      "flask_unit": "фл"
+    },
+    {
+      "drag": "транексам",
+      "dose": 15.0,
+      "unit": "мг",
+      "flask_dose": 250.0,
+      "flask_unit": "амп"
+    },
+    {
+      "drag": "транексам",
+      "dose": 40.0,
+      "unit": "мг",
+      "flask_dose": 250.0,
+      "flask_unit": "амп"
+    },
+    {
+      "drag": "КПК 500",
+      "dose": 15.0,
+      "unit": "ед",
+      "flask_dose": 500.0,
+      "flask_unit": "фл"
+    },
+    {
+      "drag": "КПК 600",
+      "dose": 15.0,
+      "unit": "ед",
+      "flask_dose": 600.0,
+      "flask_unit": "фл"
+    },
+    {
+      "drag": "КОАГИЛ",
+      "dose": 0.09,
+      "unit": "мг",
+      "flask_dose": 4.8,
+      "flask_unit": "фл"
+    },
+    {
+      "drag": "СЗП",
+      "dose": 15.0,
+      "unit": "мл",
+      "flask_dose": 300.0,
+      "flask_unit": "пак"
+    },
+    {
+      "drag": "КПцп",
+      "dose": 3.0,
+      "unit": "мл",
+      "flask_dose": 30.0,
+      "flask_unit": "пак"
+    }
+  ],
+  "per_hour_count": [
+    {
+      "drag_id": "d_na",
+      "drag": "норадреналин",
+      "dose": 0.3,
+      "unit": "mkg",
+      "concentration": 2
+    }
+  ],
+  "drag_min_menu": [
+    {
+      "id": "drag_id",
+      "text": "препарат",
+      "text_if_filled": "препарат: {}",
+      "default": "d_na",
+      "limits": "d_na"
+    },
+    {
+      "id": "conc",
+      "text": "концентрация",
+      "text_if_filled": "концентрация: {} мг/мл",
+      "default": "d_na",
+      "limits": "d_na"
+    },
+    {
+      "id": "dosage",
+      "text": "дозировка",
+      "text_if_filled": "дозировка: {} мкг/кг/мин",
+      "default": "d_na",
+      "limits": "d_na"
+    },
+    {
+      "id": "volume",
+      "text": "объем шприца",
+      "text_if_filled": "объем: {} мл",
+      "default": 50,
+      "limits": "20 50"
+    }
+  ]
+}

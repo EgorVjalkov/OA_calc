@@ -1,4 +1,4 @@
-import pandas as pd
+import json
 from dataclasses import dataclass, fields
 from typing import Optional, Callable
 from fastnumbers import fast_real, fast_int
@@ -27,30 +27,32 @@ class BaseScale:
     pass
 
     def __post_init__(self):
-        self.data: Optional[pd.DataFrame] = None
-        self.lethality_frame: Optional[pd.DataFrame] = None
+        self.data: Optional[dict] = None
+        self.lethality_frame: Optional[dict] = None
         self.total_score: Optional[ShortParam] = None
 
     def get_scale_frame(self, scale_name: str):
-        path = Path(__file__).parent / 'data' / 'scales.xlsx'
-        self.data = pd.read_excel(path, sheet_name=scale_name+'_count', index_col=0, dtype=str)
-        self.lethality_frame = pd.read_excel(path, sheet_name=scale_name+'_lethal', index_col=0)
+        path = Path(__file__).parent / 'data' / 'scales.json'
+        with open(path, 'r', encoding='utf-8') as f:
+            full_data = json.load(f)
+            
+        self.data = full_data[scale_name]['count']
+        self.lethality_frame = full_data[scale_name]['lethal']
 
-    def get_score_scale(self, indicator_name: str) -> pd.Series:
+    def get_score_scale(self, indicator_name: str) -> dict:
         if indicator_name == 'total_score':
-            indicator_ser = self.lethality_frame.loc[indicator_name]
+            indicator_dict = self.lethality_frame.get(indicator_name, {})
         else:
-            indicator_ser = self.data.loc[indicator_name]
+            indicator_dict = self.data.get(indicator_name, {})
 
-        indicator_ser = indicator_ser[indicator_ser.map(pd.notna) == True]
-        return indicator_ser
+        # Filter out null values to replicate pandas dropna
+        return {k: v for k, v in indicator_dict.items() if v is not None}
 
     def get_score(self, indicator_name: str) -> ScaleParam:
         param: ShortParam = self.__dict__[indicator_name]
         score_scale = self.get_score_scale(indicator_name)
 
-        for score in score_scale.index:
-            cell_data = score_scale[score]
+        for score, cell_data in score_scale.items():
             if '*' in cell_data:
                 if param.value == cell_data.replace('*', ''):
                     return ScaleParam(param.name, param.value, score)

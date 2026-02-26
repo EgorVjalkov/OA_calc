@@ -1,5 +1,6 @@
 from typing import Optional
-import pandas as pd
+import json
+from pathlib import Path
 from dataclasses import dataclass, InitVar
 
 from oac.program_logic.my_table import get_my_table_string
@@ -40,12 +41,13 @@ class DragInjection(BaseDrag):
     def get_patient_dose_in_flasks(self):
         return round(self.patient_dose / self.flask_dose, 1)
 
-    def count(self, weight: int) -> pd.Series:
+    def count(self, weight: int) -> dict:
         dose_per_kg = f'{self.prepare_dose(self.dose)}/кг'
         dose_in_str = f'{self.prepare_dose(self.get_patient_dose(weight))}{self.unit}'
         flasks = f'{self.get_patient_dose_in_flasks()} {self.flask_unit}'
-        answer = pd.Series({
-            f'препарат': self.drag, 'расчет': dose_per_kg, 'доза': dose_in_str, 'ед': flasks})
+        answer = {
+            'препарат': self.drag, 'расчет': dose_per_kg, 'доза': dose_in_str, 'ед': flasks
+        }
         return answer
 
 
@@ -87,17 +89,17 @@ class PerWeightCounter:
     func_id: str
     weight: int
 
-    def load_frame(self):
-        # path = 'data/drag_dosage.xlsx'
-        path = 'program_logic/data/drag_dosage.xlsx'
-        drag_frame = pd.read_excel(path, sheet_name=self.func_id, dtype=str)
-        return drag_frame
+    def load_frame(self) -> list[dict]:
+        path = Path(__file__).parent / 'data' / 'drag_dosage.json'
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return data.get(self.func_id, [])
 
     def __call__(self, *args, **kwargs) -> str:
-        drag_frame = self.load_frame()
+        drag_list_data = self.load_frame()
 
-        drag_list = [DragInjection(*drag_frame.loc[i]).count(self.weight)
-                     for i in drag_frame.index]
+        drag_list = [DragInjection(**drag_row).count(self.weight)
+                     for drag_row in drag_list_data]
 
         my_table = get_my_table_string(
             fields=['препарат', 'расчет', 'доза', 'ед'],
@@ -113,10 +115,10 @@ class PerWeighTimeCounter(PerWeightCounter):
     finish_volume: int
 
     def __call__(self, *args, **kwargs) -> str:
-        drag_frame = self.load_frame()
+        drag_list_data = self.load_frame()
 
-        drag_data = drag_frame[drag_frame.drag_id == self.drag_id].loc[0]
-        drag_inf = DragInfusion(**drag_data.to_dict())
+        drag_data = next(item for item in drag_list_data if item.get('drag_id') == self.drag_id)
+        drag_inf = DragInfusion(**drag_data)
         return drag_inf.get_optimal_flasks_num(self.weight, self.finish_volume)
 
 

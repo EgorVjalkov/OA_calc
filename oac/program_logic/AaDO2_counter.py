@@ -1,4 +1,3 @@
-import pandas as pd
 from dataclasses import dataclass, fields, InitVar
 from fastnumbers import fast_real
 
