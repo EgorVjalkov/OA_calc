@@ -130,7 +130,7 @@ class NumericParameter(BaseParameter):
 
     @value.setter
     def value(self, new_value):
-        self.default_value = round(new_value, self.ndigits)
+        self.default_value = round(fast_real(new_value), self.ndigits)
 
 
 class LimitedParameter(NumericParameter):
@@ -145,6 +145,10 @@ class LimitedParameter(NumericParameter):
             l_list = [int(i) for i in self.limits_str.split()]
         self.parsed_limits = Limits(min=l_list[0], max=l_list[1] if len(l_list) > 1 else None)
         return self
+
+    @property
+    def limits(self) -> Limits:
+        return self.parsed_limits
 
     def __repr__(self):
         return f'LimitedParameter({self.id}={self.default_value})'
