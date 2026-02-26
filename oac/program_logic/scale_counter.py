@@ -3,6 +3,7 @@ from dataclasses import dataclass, fields
 from typing import Optional, Callable
 from fastnumbers import fast_real, fast_int
 from collections import namedtuple
+from pathlib import Path
 
 from oac.program_logic.patientparameter import Limits
 from oac.program_logic.parameters import ShortParam
@@ -31,7 +32,7 @@ class BaseScale:
         self.total_score: Optional[ShortParam] = None
 
     def get_scale_frame(self, scale_name: str):
-        path = 'program_logic/data/scales.xlsx'
+        path = Path(__file__).parent / 'data' / 'scales.xlsx'
         self.data = pd.read_excel(path, sheet_name=scale_name+'_count', index_col=0, dtype=str)
         self.lethality_frame = pd.read_excel(path, sheet_name=scale_name+'_lethal', index_col=0)
 
