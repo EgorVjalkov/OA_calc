@@ -36,8 +36,8 @@ class BaseScale:
         with open(path, 'r', encoding='utf-8') as f:
             full_data = json.load(f)
             
-        self.data = full_data[scale_name]['count']
-        self.lethality_frame = full_data[scale_name]['lethal']
+        self.data = full_data[f"{scale_name}_count"]
+        self.lethality_frame = full_data[f"{scale_name}_lethal"]
 
     def get_score_scale(self, indicator_name: str) -> dict:
         if indicator_name == 'total_score':
@@ -53,8 +53,9 @@ class BaseScale:
         score_scale = self.get_score_scale(indicator_name)
 
         for score, cell_data in score_scale.items():
+            cell_data = str(cell_data)
             if '*' in cell_data:
-                if param.value == cell_data.replace('*', ''):
+                if str(param.value) == cell_data.replace('*', ''):
                     return ScaleParam(param.name, param.value, score)
 
             else:
@@ -67,7 +68,10 @@ class BaseScale:
         field_names = [i.name for i in fields(self)]
         scores = {}
         for indicator_name in field_names:
-            scores[indicator_name] = self.get_score(indicator_name)
+            score = self.get_score(indicator_name)
+            if score is None:
+                print(f"DEBUG: get_score returned None for {indicator_name} with value {self.__dict__[indicator_name]}")
+            scores[indicator_name] = score
 
         return scores
 

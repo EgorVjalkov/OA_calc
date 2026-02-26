@@ -124,8 +124,9 @@ class SelectedParameter(BaseParameter):
 class NumericParameter(BaseParameter):
 
     def __post_init__(self):
-        if len(self.default_value) > 1:
-            self.ndigits = len(self.default_value.replace('0.', ''))
+        val_str = str(self.default_value)
+        if len(val_str) > 1:
+            self.ndigits = len(val_str.replace('0.', ''))
         else:
             self.ndigits = 0
 
@@ -166,8 +167,7 @@ class LimitedParameter(NumericParameter):
 
 def init_example_by_fields(cls, kwargs_dict) -> BaseParameter:
     cls_fields = [i.name for i in dataclasses.fields(cls)]
-    #print([kwargs_dict[i] for i in kwargs_dict if i in cls_fields])
-    return cls(*[kwargs_dict[i] for i in kwargs_dict if i in cls_fields])
+    return cls(*[kwargs_dict.get(i) for i in cls_fields])
 
 
 def load_parameters() -> dict:
@@ -181,9 +181,10 @@ def load_parameters() -> dict:
 
     for param_id, row_dict in param_dict_data.items():
         parameter = None
+        row_dict['id'] = param_id
 
         match row_dict:
-            case {'fill_by_text_input': 'True', 'limits': 'no limits'}:
+            case {'fill_by_text_input': 'True', 'limits': l} if l in ('no limits', None):
                 parameter = init_example_by_fields(NumericParameter, row_dict)
 
             case {'fill_by_text_input': 'True'}:
@@ -193,9 +194,11 @@ def load_parameters() -> dict:
                 parameter = init_example_by_fields(DateTimeParameter, row_dict)
 
             case {'fill_by_text_input': 'False'}:
-                variants = [init_example_by_fields(CompParamMenuBtn, v) 
-                            for k, v in comp_param_btns_data.items() 
-                            if v.get('parameter_id') == row_dict['id']]
+                variants = []
+                for k, v in comp_param_btns_data.items():
+                    if v.get('parameter_id') == row_dict['id']:
+                        v['id'] = k
+                        variants.append(init_example_by_fields(CompParamMenuBtn, v))
                 row_dict.update({'variants': {i.id: i for i in variants}})
                 parameter = init_example_by_fields(SelectedParameter, row_dict)
             case _:
