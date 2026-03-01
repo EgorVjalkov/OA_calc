@@ -7,8 +7,7 @@ ENV PYTHONUNBUFFERED=1 \
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        build-essential \
-        libpq-dev && \
+        curl ca-certificates && \
     pip install "poetry==$POETRY_VERSION" && \
     rm -rf /var/lib/apt/lists/*
 
