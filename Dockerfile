@@ -3,11 +3,12 @@ FROM python:3.12-slim
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app \
-    POETRY_VERSION=2.1.3
+    POETRY_VERSION=2.1.3 \
+    POETRY_REQUESTS_TIMEOUT=120
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        curl ca-certificates && \
+    curl ca-certificates && \
     pip install "poetry==$POETRY_VERSION" && \
     rm -rf /var/lib/apt/lists/*
 
