@@ -9,6 +9,7 @@ from oac.dialogs import start_commands
 from oac.dialogs.patient_dialog.windows import patient_dialog
 from oac.dialogs.KES_dialog.KES_windows import KES_dialog
 from oac.dialogs.misc_dialogs.misc_windows import feedback_dialog, theory_dialog
+from oac.dialogs.criteria_dialogs.criteria_windows import router as criteria_router
 
 logging.basicConfig(level=logging.INFO)
 
@@ -21,6 +22,7 @@ async def main(bot: Bot):
     dp.include_router(KES_dialog)
     dp.include_router(feedback_dialog)
     dp.include_router(theory_dialog)
+    dp.include_router(criteria_router)
     setup_dialogs(dp)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

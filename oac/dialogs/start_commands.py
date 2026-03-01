@@ -4,7 +4,7 @@ from aiogram.filters import Command
 
 from aiogram_dialog import StartMode, DialogManager
 
-from oac.dialogs.states import PatientSession, FeedBack, Theory, KES
+from oac.dialogs.states import PatientSession, FeedBack, Theory, KES, CriteriaSG
 from oac.program_logic.patient import Patient
 from oac.dialogs.patient_dialog.selected import get_patient
 from oac.dialogs.KES_dialog.KES_calculator import KesCalculator
@@ -17,6 +17,7 @@ async def start_dialog(message: Message):
     await message.answer('''Привет, я - бот для расчетов в акушерской анестезиологии. 
 /new_patient - новый пациент   
 /kes - расчет времени пребывания
+/criteria - критерии качества оказания мед. помощи
 /ask - задать вопрос разработчикам''')
 # /theory - запросить справку по функции
 
@@ -43,6 +44,15 @@ async def kes(message: Message,
 async def ask(message: Message,
               dialog_manager: DialogManager) -> None:
     await dialog_manager.start(FeedBack.ask_menu)
+
+
+@router.message(Command("criteria"))
+async def start_criteria(message: Message, dialog_manager: DialogManager):
+    """
+    Запускает диалог выбора режима: Критерии качества или Рекомендации
+    """
+    await dialog_manager.start(CriteriaSG.mode_selection, mode=StartMode.RESET_STACK)
+
 
 
 #@router.message(Command('theory'))

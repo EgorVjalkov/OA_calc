@@ -41,13 +41,11 @@ class DrugInjection(BaseDrug):
     def get_patient_dose_in_flasks(self):
         return round(self.patient_dose / self.flask_dose, 1)
 
-    def count(self, weight: int) -> dict:
+    def count(self, weight: int) -> list:
         dose_per_kg = f'{self.prepare_dose(self.dose)}/кг'
         dose_in_str = f'{self.prepare_dose(self.get_patient_dose(weight))}{self.unit}'
         flasks = f'{self.get_patient_dose_in_flasks()} {self.flask_unit}'
-        answer = {
-            'препарат': self.drug, 'расчет': dose_per_kg, 'доза': dose_in_str, 'ед': flasks
-        }
+        answer = [self.drug, dose_per_kg, dose_in_str, flasks]
         return answer
 
 
@@ -90,7 +88,9 @@ class PerWeightCounter:
     weight: int
 
     def load_frame(self) -> list[dict]:
-        return data_loader.drug_dosage_data.get(self.func_id, [])
+        res = data_loader.drug_dosage_data.get(self.func_id, [])
+        print(f"DEBUG load_frame: func_id='{self.func_id}', keys={list(data_loader.drug_dosage_data.keys())[:3]}")
+        return res
 
     def calculate(self) -> str:
         drug_list_data = self.load_frame()

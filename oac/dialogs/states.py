@@ -34,3 +34,8 @@ class KES(StatesGroup):
     parameter_value_input = State()
     report_menu = State()
     reference = State()
+
+class CriteriaSG(StatesGroup):
+    mode_selection = State()
+    select_pathology = State()
+    view_criteria = State()
